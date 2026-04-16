@@ -7,7 +7,7 @@ import streamlit as st
 import requests
 import pandas as pd
 
-API_BASE = "http://localhost:8000"
+API_BASE = "http://localhost:8002"
 
 st.set_page_config(page_title="Trade Data Explorer", layout="wide")
 st.title("🌍 Trade Data Explorer")
@@ -94,6 +94,10 @@ if search_desc and data:
 
 if data:
     df = pd.DataFrame(data)
+    # Ensure consistent column types for Arrow serialization
+    for col in df.columns:
+        if df[col].apply(type).nunique() > 1:
+            df[col] = df[col].astype(str).replace("None", None)
 
     # Summary metrics
     m1, m2, m3 = st.columns(3)
