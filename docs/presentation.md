@@ -1,271 +1,242 @@
 ---
 author: Department for Business and Trade
-date: MMMM dd, YYYY
+date: April 2026
 paging: "%d / %d"
 ---
 
-# 🇬🇧 UK Tariff Data Explorer
+# UK Tariff Data Explorer
 
-A data platform and interactive dashboard built on
-UK Global Tariff open data.
+Upload any CSV. Get an API. See it visualised.
 
-**Department for Business and Trade**
-
----
-
-## What is this?
-
-Two things working together:
-
-1. A **FastAPI backend** that turns CSV files into a RESTful JSON API
-2. A **Streamlit dashboard** that consumes that API and visualises
-   tariff data with ML-powered features
-
-The dashboard never touches the CSV files directly.
-All data flows through the API.
+**Department for Business and Trade - Hackathon 2026**
 
 ---
 
-## Why does that matter?
+## The Problem
+
+Government teams sit on mountains of CSV data.
+
+- Tariff schedules, quota allocations, trade agreements
+- Locked in spreadsheets, hard to share, harder to visualise
+- Every new dataset needs a new pipeline
+
+What if you could just **upload a CSV** and get an API + dashboard automatically?
+
+---
+
+## What We Built
 
 ```
-  CSV files ──→ FastAPI ──→ Streamlit dashboard
-                  ↑
-          (future: uploads,
-           database, live feed)
+                    +------------------+
+  Upload CSV  --->  |  AWS Lambda API  |  ---> S3 Storage
+                    +------------------+
+                            |
+                    +------------------+
+                    |    Streamlit     |  ---> Interactive Dashboard
+                    |   (AWS EC2)     |
+                    +------------------+
 ```
 
-- The API is the single source of truth
-- Swap CSVs for a database later — no dashboard changes
-- Add CSV upload endpoints — dashboard picks them up automatically
-- Deploy API and dashboard as separate containers
+Three pieces, fully deployed on AWS:
+
+1. **API** - Lambda + API Gateway (serverless, scales to zero)
+2. **Storage** - S3 bucket (all data lives here)
+3. **Dashboard** - Streamlit on EC2 (visualisation layer)
+
+---
+
+## How It Works
+
+Upload a CSV file:
+
+```
+POST /api/upload  (with CSV file)
+  --> parses CSV, stores in S3
+  --> returns: resource name, endpoint, record count
+```
+
+Query it immediately:
+
+```
+GET /api/commodities              --> all records as JSON
+GET /api/commodities?_limit=10    --> paginated
+GET /api/trade_quotas?status=Open --> filtered
+GET /                             --> list all datasets
+```
+
+Stateless convert (no storage):
+
+```
+POST /api/convert  --> CSV in, JSON out, nothing stored
+```
 
 ---
 
 ## The Data
 
-Eight datasets modelled on real DBT open data:
+Nine datasets seeded from fictional UK trade data:
 
-- **Commodities** — 86 codes in a parent-child hierarchy
-- **Measures** — 62 MFN and preferential duty rates
-- **Trade Quotas** — 15 tariff rate quotas with fill rates
-- **Preferential Measures** — 24 FTA preferential rates
-- **Code Changes** — 15 historical splits, merges, duty changes
-- **Geographical Areas** — 42 countries and groups
-- **Measure Types** — 24 types of trade measure
-- **Certificates** — 24 document requirements
+| Dataset | Records | What it covers |
+|---------|---------|----------------|
+| Commodities | 86 | Tariff code hierarchy |
+| Measures | 62 | MFN and preferential duty rates |
+| Trade Quotas | 15 | Quota fill rates and volumes |
+| Preferential Measures | 24 | FTA rates |
+| Code Changes | 15 | Historical nomenclature changes |
+| Geographical Areas | 42 | Countries and trade groups |
+| Certificates | 24 | Document requirements |
+| Water Quality | 80 | Environmental sample data |
 
-All fictional, but structurally identical to the real thing.
-
----
-
-## The API
-
-Auto-discovers every CSV in the data directory.
-Each file becomes a queryable endpoint.
-
-```
-GET /                              → list all datasets
-GET /api/commodities               → all commodity codes
-GET /api/commodities?declarable=true&_limit=10
-GET /api/trade_quotas?status=Open
-GET /api/measures_on_declarable_commodities?commodity_code=0201100000
-POST /reload                       → hot-reload new data
-```
-
-Supports filtering, pagination, and field projection.
+All stored in S3, served through the API.
 
 ---
 
-## The Dashboard — 8 Pages
+## The Dashboard - 8 Pages
 
 ```
- 1. Commodity Code Classifier     ← ML
- 2. Quota Exhaustion Dashboard    ← ML
- 3. Tariff Landscape Overview     ← ML
- 4. FTA Coverage Map
- 5. Change Timeline               ← anomaly detection
+ 1. Commodity Code Classifier     <-- TF-IDF search
+ 2. Quota Exhaustion Dashboard    <-- Linear regression
+ 3. Tariff Landscape Overview     <-- K-means clustering
+ 4. FTA Coverage Map              <-- Choropleth + Sankey
+ 5. Change Timeline               <-- Anomaly detection
  6. Document Requirements Checker
  7. Duty Comparison Tool
- 8. Tariff Protection Index       ← composite scoring
+ 8. Tariff Protection Index       <-- Composite scoring
+```
+
+Every page reads from the live AWS API endpoint.
+
+---
+
+## ML Highlights
+
+**Commodity Classifier** - Type "beef", find "bovine".
+TF-IDF cosine similarity with synonym expansion.
+No training data needed.
+
+**Quota Forecasting** - Linear regression on fill-rate
+time series. Predicts exhaustion dates.
+
+**Tariff Clustering** - K-means on duty rates, preferences,
+certificates. PCA projection to 2D scatter.
+
+**Anomaly Detection** - Z-score flagging on quarterly
+nomenclature changes.
+
+---
+
+## Infrastructure
+
+```
+Resource              Service         Cost
+--------              -------         ----
+API                   Lambda          Free tier
+API routing           API Gateway     Free tier
+Data storage          S3              Free tier
+Dashboard hosting     EC2 t3.micro    Free tier
+```
+
+All managed by Terraform. One command to deploy, one to destroy.
+
+```bash
+cd infra && terraform apply     # deploy everything
+cd infra && terraform destroy   # tear it all down
 ```
 
 ---
 
-## Page 1: Commodity Code Classifier
+## Deploy Workflow
 
-**Problem:** Traders type "beef" but the tariff says "bovine".
+Infrastructure (run once):
+```bash
+cd infra && terraform apply
+pixi run seed-data              # upload CSVs to S3
+```
 
-**Solution:** TF-IDF cosine similarity with synonym expansion.
+Code updates:
+```bash
+pixi run deploy                 # update Lambda API
+pixi run deploy-streamlit       # update dashboard
+```
 
-How it works:
-- Walk up the commodity hierarchy to build rich descriptions
-- Expand formal terms with everyday synonyms
-  ("bovine" → "beef cattle cow")
-- Vectorise with TF-IDF (word importance scoring)
-- Rank all codes by cosine similarity to the query
-
-Search "beef" → gets Boneless (24%), Carcasses (22%), Cattle (16%)
-
----
-
-## Why not a classifier?
-
-We tried logistic regression first.
-
-- 55 declarable codes, one example each = 55 classes
-- Model couldn't learn anything
-- Every prediction came back at ~1.9% confidence
-
-Cosine similarity doesn't need training data.
-It just measures word overlap. Works perfectly with small datasets.
+No downtime. No containers to rebuild for API changes.
 
 ---
 
-## Page 2: Quota Exhaustion Dashboard
+## The Vision: AI-Powered Dashboards
 
-**Problem:** Will this quota still be open when my shipment arrives?
-
-**Solution:** Linear regression on fill-rate time series.
-
-- Gauge charts show current fill (green / amber / red)
-- Synthetic monthly data points from period start to now
-- Linear model projects forward to period end
-- Calculates predicted exhaustion date
-
-Simple, explainable, and honest about uncertainty.
-
----
-
-## Page 3: Tariff Landscape
-
-**Problem:** What does the UK tariff actually look like?
-
-**Solution:** K-means clustering + PCA.
-
-- Histogram and pie chart of duty rate distribution
-- Heatmap of mean duty by commodity chapter
-- Build feature vectors per commodity:
-  [duty, duty_type, n_preferences, n_certificates]
-- Standardise → K-means → PCA to 2D → scatter plot
-
-Reveals natural groupings: zero-rated tech, protected agriculture,
-mixed-duty beverages.
-
----
-
-## Page 4: FTA Coverage Map
-
-**Problem:** Where do we have trade deals and what do they cover?
-
-**Solution:** Data joining + Plotly visualisation.
-
-- Choropleth world map shaded by preferential coverage depth
-- Sankey diagram: trade agreements → commodity chapters
-- Cumulation network showing shared arrangements
-
-No ML needed — the visual impact speaks for itself.
-
----
-
-## Page 5: Change Timeline
-
-**Problem:** Is the nomenclature stable or churning?
-
-**Solution:** Z-score anomaly detection.
-
-- Scatter timeline of all changes, colour-coded by type
-- Stacked bar chart by quarter
-- Flag any quarter with changes > mean + 1.5σ
-
-Simple threshold, appropriate for the data volume.
-
----
-
-## Pages 6, 7, 8
-
-**Document Checker** — Select a commodity code, see required
-certificates with GOV.UK guidance links. Pure lookup.
-
-**Duty Comparison** — Pick a code and countries, see MFN vs
-preferential rates side by side. Savings callouts.
-
-**Protection Index** — Weighted composite score ranking chapters
-by duty rates, quota pressure, and certificate burden.
-Radar chart for comparing chapters.
-
----
-
-## Algorithm Summary
+The upload endpoint is the foundation for something bigger.
 
 ```
-Page  Algorithm               Library
-────  ──────────────────────  ────────────
-  1   TF-IDF + cosine sim    scikit-learn
-  2   Linear regression      scikit-learn
-  3   K-means + PCA          scikit-learn
-  4   —                      plotly
-  5   Z-score threshold      numpy
-  6   —                      pandas
-  7   —                      pandas
-  8   Min-max + weighted     scikit-learn
-      composite
+  Upload CSV
+      |
+      v
+  AWS Bedrock (AI)
+      |
+      +--> "This looks like geographical data"
+      |     --> auto-generate choropleth map
+      |
+      +--> "This has time series columns"
+      |     --> auto-generate trend charts
+      |
+      +--> "This has categorical + numeric data"
+            --> auto-generate comparison plots
 ```
+
+Upload any CSV. AI analyses the schema and data patterns.
+New Streamlit dashboard tabs generated automatically.
+
+---
+
+## What That Looks Like
+
+1. User uploads `water_quality.csv`
+2. Bedrock sees: lat/lon columns, numeric measurements, dates
+3. Auto-generates:
+   - Map of sampling sites
+   - Time series of pH levels
+   - Compliance heatmap by region
+4. New dashboard tab appears instantly
+
+No code changes. No manual configuration.
+The data describes itself.
 
 ---
 
 ## Tech Stack
 
 ```
-Layer         Tool            Why
-─────         ────            ───
-Data          CSV files       Mirrors real DBT open data
-API           FastAPI         Auto-discovery, filtering, fast
-Dashboard     Streamlit       Rapid prototyping, interactive
-ML            scikit-learn    Lightweight, no GPU needed
-Viz           Plotly          Interactive charts, maps
-Packaging     Pixi            Reproducible environments
-Containers    Docker Compose  API + dashboard as services
+Layer         Tool              Why
+-----         ----              ---
+API           FastAPI + Mangum  Serverless, auto-docs
+Compute       AWS Lambda        Scales to zero, free tier
+Storage       AWS S3            Durable, cheap, simple
+Gateway       API Gateway v2    HTTP API, low latency
+Dashboard     Streamlit         Rapid prototyping
+Hosting       EC2 t3.micro      Free tier, Docker
+ML            scikit-learn      Lightweight, no GPU
+Viz           Plotly            Interactive charts, maps
+IaC           Terraform         Reproducible infra
+Packaging     Pixi              Reproducible environments
+AI (future)   AWS Bedrock       Schema analysis, code gen
 ```
 
 ---
 
-## Running It
+## Live Demo
 
-Locally with Pixi:
-
-```bash
-pixi run serve       # start the API on :8000
-pixi run dashboard   # start the dashboard on :8501
+API endpoint:
+```
+https://qk011cty71.execute-api.eu-west-2.amazonaws.com/
 ```
 
-With Docker:
-
-```bash
-docker compose up --build
+Dashboard:
 ```
-
-API at localhost:8000, dashboard at localhost:8501.
-
----
-
-## What's Next
-
-- **CSV upload endpoint** — POST a file, it becomes a new dataset
-- **Sentence embeddings** — replace TF-IDF for semantic search
-- **Real data feed** — pull from data.api.trade.gov.uk
-- **Seasonal forecasting** — Prophet for quota predictions
-- **Auth** — API keys or OAuth2 on the FastAPI layer
-- **Redis caching** — for multi-user deployments
+http://<streamlit-ip>:8501
+```
 
 ---
 
 # Questions?
-
-```
-pixi run serve       → API
-pixi run dashboard   → Dashboard
-slides docs/presentation.md → This presentation
-```
 
 **github.com/streamcleaners/csv-to-json-api**
