@@ -1,0 +1,81 @@
+site_id,site_name,river,region,sample_date,ph,dissolved_oxygen_mg_l,turbidity_ntu,temperature_c,nitrate_mg_l,phosphate_mg_l,ammonia_mg_l,conductivity_us_cm,e_coli_cfu_100ml,status,compliance
+WQ001,Thames at Richmond,Thames,London,2024-01-15,7.2,8.5,12.3,8.1,3.2,0.15,0.04,620,180,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-02-12,7.1,8.2,14.8,7.4,3.5,0.18,0.05,635,210,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-03-18,7.3,8.8,11.2,9.2,3.0,0.14,0.03,610,150,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-04-22,7.4,9.1,9.5,11.8,2.8,0.12,0.03,595,120,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-05-20,7.5,8.9,10.8,14.5,2.5,0.11,0.02,580,95,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-06-17,7.6,7.8,15.2,18.3,2.2,0.10,0.02,560,85,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-07-15,7.8,6.5,22.4,21.1,1.8,0.09,0.02,545,70,Moderate,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-08-19,7.9,5.8,28.6,22.5,1.5,0.08,0.01,530,60,Moderate,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-09-16,7.6,7.2,18.3,17.8,2.0,0.11,0.03,555,110,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-10-14,7.3,8.4,13.1,12.4,2.9,0.14,0.04,600,160,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-11-18,7.2,8.7,12.5,9.1,3.3,0.16,0.04,625,190,Good,TRUE
+WQ001,Thames at Richmond,Thames,London,2024-12-16,7.1,8.9,11.8,7.2,3.6,0.19,0.05,640,220,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-01-15,7.8,9.1,8.7,7.5,2.8,0.12,0.03,480,90,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-02-12,7.7,9.0,9.2,6.8,3.0,0.13,0.03,490,100,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-03-18,7.9,9.3,7.8,8.5,2.6,0.11,0.02,475,80,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-04-22,8.0,9.5,6.5,10.9,2.3,0.09,0.02,460,65,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-05-20,8.1,9.2,7.2,13.8,2.0,0.08,0.01,445,50,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-06-17,8.2,8.5,9.8,17.2,1.7,0.07,0.01,430,40,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-07-15,8.3,7.2,14.5,20.1,1.4,0.06,0.01,415,35,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-08-19,8.4,6.8,16.2,21.3,1.2,0.05,0.01,405,30,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-09-16,8.1,7.8,11.4,16.5,1.6,0.07,0.02,425,55,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-10-14,7.9,8.8,8.9,11.8,2.4,0.10,0.03,465,75,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-11-18,7.8,9.1,8.5,8.2,2.9,0.12,0.03,485,95,Good,TRUE
+WQ002,Severn at Gloucester,Severn,South West,2024-12-16,7.7,9.2,8.9,6.5,3.1,0.14,0.04,495,105,Good,TRUE
+WQ003,Mersey at Warrington,Mersey,North West,2024-01-15,6.9,6.2,25.4,9.3,5.1,0.45,0.12,820,450,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-02-12,6.8,5.9,28.1,8.5,5.5,0.52,0.15,850,520,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-03-18,6.9,6.5,23.8,10.1,4.8,0.41,0.11,800,410,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-04-22,7.0,7.0,20.5,12.5,4.2,0.35,0.09,760,350,Moderate,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-05-20,7.1,7.2,18.9,15.2,3.8,0.30,0.08,730,300,Moderate,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-06-17,7.2,6.5,22.3,18.8,3.5,0.28,0.07,710,280,Moderate,TRUE
+WQ003,Mersey at Warrington,Mersey,North West,2024-07-15,7.3,5.5,30.2,21.5,3.0,0.25,0.06,690,250,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-08-19,7.4,4.8,35.8,23.1,2.8,0.22,0.05,670,230,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-09-16,7.2,5.9,26.5,18.2,3.3,0.30,0.08,720,320,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-10-14,7.0,6.8,22.1,13.1,4.5,0.38,0.10,780,390,Moderate,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-11-18,6.9,6.1,26.8,9.8,5.0,0.44,0.12,815,440,Poor,FALSE
+WQ003,Mersey at Warrington,Mersey,North West,2024-12-16,6.8,5.8,29.5,8.0,5.4,0.50,0.14,845,510,Poor,FALSE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-01-15,7.4,8.8,10.1,6.8,2.5,0.11,0.03,520,130,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-02-12,7.3,8.6,11.5,6.0,2.7,0.12,0.03,530,145,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-03-18,7.5,9.0,9.2,7.8,2.3,0.10,0.02,510,110,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-04-22,7.6,9.3,7.8,10.2,2.0,0.08,0.02,495,90,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-05-20,7.7,9.1,8.5,13.1,1.8,0.07,0.01,480,75,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-06-17,7.8,8.2,11.2,16.5,1.5,0.06,0.01,465,60,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-07-15,7.9,7.0,15.8,19.8,1.2,0.05,0.01,450,45,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-08-19,8.0,6.5,18.2,21.0,1.0,0.04,0.01,440,35,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-09-16,7.7,7.5,12.8,16.0,1.6,0.07,0.02,470,70,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-10-14,7.5,8.5,10.5,11.2,2.2,0.09,0.03,505,115,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-11-18,7.4,8.8,10.0,7.5,2.6,0.11,0.03,525,135,Good,TRUE
+WQ004,Tyne at Newcastle,Tyne,North East,2024-12-16,7.3,8.9,10.8,5.8,2.8,0.13,0.04,535,150,Good,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-01-15,7.1,7.9,15.6,7.9,3.8,0.22,0.06,580,200,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-02-12,7.0,7.6,17.2,7.1,4.1,0.25,0.07,595,230,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-03-18,7.2,8.1,14.2,9.5,3.5,0.20,0.05,565,180,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-04-22,7.3,8.5,12.1,12.0,3.1,0.17,0.04,545,150,Good,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-05-20,7.4,8.3,13.5,14.8,2.8,0.15,0.03,530,125,Good,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-06-17,7.5,7.5,16.8,18.0,2.4,0.13,0.03,510,100,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-07-15,7.6,6.2,23.5,20.8,2.0,0.11,0.02,490,80,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-08-19,7.7,5.5,28.1,22.2,1.7,0.09,0.02,475,65,Poor,FALSE
+WQ005,Avon at Bath,Avon,South West,2024-09-16,7.4,6.8,19.5,17.2,2.2,0.14,0.04,515,115,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-10-14,7.2,7.8,15.8,12.5,3.2,0.19,0.05,555,170,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-11-18,7.1,7.9,16.0,8.5,3.7,0.21,0.06,575,195,Moderate,TRUE
+WQ005,Avon at Bath,Avon,South West,2024-12-16,7.0,7.7,17.5,6.8,4.0,0.24,0.07,590,225,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-01-15,7.6,8.0,11.8,7.0,4.5,0.32,0.08,710,280,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-02-12,7.5,7.8,13.2,6.2,4.8,0.35,0.09,730,310,Moderate,FALSE
+WQ006,Cam at Cambridge,Cam,East of England,2024-03-18,7.7,8.2,10.5,8.3,4.2,0.29,0.07,695,260,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-04-22,7.8,8.6,8.8,10.8,3.8,0.25,0.06,670,220,Good,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-05-20,7.9,8.4,9.5,13.5,3.4,0.22,0.05,650,190,Good,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-06-17,8.0,7.5,12.8,17.0,3.0,0.19,0.04,625,160,Good,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-07-15,8.1,6.2,18.5,20.2,2.5,0.16,0.03,600,130,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-08-19,8.2,5.5,22.8,21.8,2.2,0.14,0.03,585,110,Moderate,FALSE
+WQ006,Cam at Cambridge,Cam,East of England,2024-09-16,7.9,6.8,15.2,16.2,2.8,0.20,0.05,635,175,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-10-14,7.7,7.8,12.0,11.5,3.9,0.27,0.07,685,250,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-11-18,7.6,8.0,12.2,7.8,4.4,0.31,0.08,705,275,Moderate,TRUE
+WQ006,Cam at Cambridge,Cam,East of England,2024-12-16,7.5,7.9,13.5,5.8,4.7,0.34,0.09,725,305,Moderate,FALSE
+WQ007,Dee at Chester,Dee,North West,2024-01-15,7.5,9.2,7.5,6.5,1.8,0.08,0.02,380,55,Good,TRUE
+WQ007,Dee at Chester,Dee,North West,2024-04-22,7.7,9.6,5.8,10.5,1.4,0.06,0.01,360,35,Good,TRUE
+WQ007,Dee at Chester,Dee,North West,2024-07-15,8.0,7.8,10.2,19.5,1.0,0.04,0.01,340,25,Good,TRUE
+WQ007,Dee at Chester,Dee,North West,2024-10-14,7.6,9.0,8.0,11.0,1.6,0.07,0.02,370,45,Good,TRUE
+WQ008,Ouse at York,Ouse,Yorkshire,2024-01-15,7.3,7.5,18.2,7.2,4.0,0.28,0.07,650,250,Moderate,TRUE
+WQ008,Ouse at York,Ouse,Yorkshire,2024-04-22,7.5,8.2,14.5,11.5,3.2,0.20,0.05,600,180,Good,TRUE
+WQ008,Ouse at York,Ouse,Yorkshire,2024-07-15,7.8,6.0,24.8,20.5,2.2,0.14,0.03,540,120,Moderate,FALSE
+WQ008,Ouse at York,Ouse,Yorkshire,2024-10-14,7.4,7.8,16.5,12.0,3.5,0.24,0.06,630,220,Moderate,TRUE
