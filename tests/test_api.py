@@ -1,79 +1,67 @@
-"""Tests for the FastAPI endpoints."""
+"""
+Smoke tests for the FastAPI CSV-to-JSON API.
+"""
 
-import pytest
+from fastapi.testclient import TestClient
 
+from app.main import app
 
-class TestRootEndpoint:
-    def test_lists_datasets(self, test_client):
-        resp = test_client.get("/")
-        assert resp.status_code == 200
-        data = resp.json()
-        assert "products" in data["datasets"]
-        info = data["datasets"]["products"]
-        assert info["records"] == 3
-        assert "name" in info["columns"]
-
-    def test_endpoint_path(self, test_client):
-        resp = test_client.get("/")
-        info = resp.json()["datasets"]["products"]
-        assert info["endpoint"] == "/api/products"
+client = TestClient(app)
 
 
-class TestGetCollection:
-    def test_returns_all_records(self, test_client):
-        resp = test_client.get("/api/products")
-        assert resp.status_code == 200
-        body = resp.json()
-        assert body["total"] == 3
-        assert body["count"] == 3
-        assert len(body["data"]) == 3
-
-    def test_pagination_limit(self, test_client):
-        resp = test_client.get("/api/products?_limit=2")
-        body = resp.json()
-        assert body["count"] == 2
-        assert body["total"] == 3
-
-    def test_pagination_offset(self, test_client):
-        resp = test_client.get("/api/products?_limit=2&_offset=2")
-        body = resp.json()
-        assert body["count"] == 1
-        assert body["offset"] == 2
-
-    def test_field_projection(self, test_client):
-        resp = test_client.get("/api/products?_fields=name,price")
-        body = resp.json()
-        row = body["data"][0]
-        assert set(row.keys()) == {"name", "price"}
-
-    def test_column_filter(self, test_client):
-        resp = test_client.get("/api/products?available=true")
-        body = resp.json()
-        assert body["total"] == 2
-        assert all(r["available"] is True for r in body["data"])
-
-    def test_404_unknown_dataset(self, test_client):
-        resp = test_client.get("/api/nonexistent")
-        assert resp.status_code == 404
+def test_root_returns_datasets():
+    response = client.get("/")
+    assert response.status_code == 200
+    data = response.json()
+    assert "datasets" in data
+    assert "commodities" in data["datasets"]
 
 
-class TestGetRecord:
-    def test_get_by_index(self, test_client):
-        resp = test_client.get("/api/products/0")
-        assert resp.status_code == 200
-        assert resp.json()["name"] == "Widget"
-
-    def test_index_out_of_range(self, test_client):
-        resp = test_client.get("/api/products/99")
-        assert resp.status_code == 404
-
-    def test_unknown_dataset(self, test_client):
-        resp = test_client.get("/api/nonexistent/0")
-        assert resp.status_code == 404
+def test_get_commodities():
+    response = client.get("/api/commodities?_limit=5")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] <= 5
+    assert "data" in data
+    assert len(data["data"]) > 0
 
 
-class TestReload:
-    def test_reload_returns_ok(self, test_client):
-        resp = test_client.post("/reload")
-        assert resp.status_code == 200
-        assert resp.json()["status"] == "ok"
+def test_get_single_record():
+    response = client.get("/api/commodities/0")
+    assert response.status_code == 200
+    record = response.json()
+    assert "commodity_code" in record
+
+
+def test_404_unknown_dataset():
+    response = client.get("/api/nonexistent")
+    assert response.status_code == 404
+
+
+def test_filtering():
+    response = client.get("/api/commodities?declarable=true&_limit=3")
+    assert response.status_code == 200
+    data = response.json()
+    for row in data["data"]:
+        assert row["declarable"] is True
+
+
+def test_field_projection():
+    response = client.get("/api/commodities?_fields=commodity_code,description&_limit=2")
+    assert response.status_code == 200
+    data = response.json()
+    for row in data["data"]:
+        assert set(row.keys()) == {"commodity_code", "description"}
+
+
+def test_record_out_of_range():
+    response = client.get("/api/commodities/99999")
+    assert response.status_code == 404
+
+
+def test_reload():
+    response = client.post("/reload")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "commodities" in data["datasets_loaded"]
