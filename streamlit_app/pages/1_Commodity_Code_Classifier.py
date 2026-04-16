@@ -112,13 +112,15 @@ if query:
     for i in top_idx:
         row = declarable.iloc[i]
         chapter = str(row["commodity_code"])[:2]
-        results.append({
-            "commodity_code": row["commodity_code"],
-            "description": row["description"],
-            "similarity": round(float(scores[i]) * 100, 1),  # as percentage
-            "chapter": chapter,
-            "label": f"{row['commodity_code']} — {row['description'][:40]}",
-        })
+        results.append(
+            {
+                "commodity_code": row["commodity_code"],
+                "description": row["description"],
+                "similarity": round(float(scores[i]) * 100, 1),  # as percentage
+                "chapter": chapter,
+                "label": f"{row['commodity_code']} — {row['description'][:40]}",
+            }
+        )
 
     results_df = pd.DataFrame(results)
 
@@ -173,11 +175,13 @@ if query:
                 if match_row.empty:
                     break
                 crow = match_row.iloc[0]
-                chain.append({
-                    "code": current,
-                    "description": crow["description"],
-                    "indent": int(crow["commodity_code_indent"]),
-                })
+                chain.append(
+                    {
+                        "code": current,
+                        "description": crow["description"],
+                        "indent": int(crow["commodity_code_indent"]),
+                    }
+                )
                 current = crow["parent_commodity_code"] if pd.notna(crow["parent_commodity_code"]) else None
 
             chain.reverse()
@@ -195,17 +199,21 @@ if query:
     st.subheader("Similarity Distribution")
     st.markdown("How your query scored against all declarable commodity codes.")
 
-    all_scores = pd.DataFrame({
-        "commodity_code": declarable["commodity_code"],
-        "similarity": (scores * 100).round(1),
-    })
+    all_scores = pd.DataFrame(
+        {
+            "commodity_code": declarable["commodity_code"],
+            "similarity": (scores * 100).round(1),
+        }
+    )
     all_scores = all_scores[all_scores["similarity"] > 0].sort_values("similarity", ascending=False)
 
     if all_scores.empty:
         st.info("No commodity codes had any similarity to your query. Try different terms.")
     else:
         fig2 = px.histogram(
-            all_scores, x="similarity", nbins=20,
+            all_scores,
+            x="similarity",
+            nbins=20,
             title="Distribution of Similarity Scores (non-zero only)",
             labels={"similarity": "Similarity (%)", "count": "Commodity Codes"},
             color_discrete_sequence=["#1f77b4"],
@@ -213,4 +221,4 @@ if query:
         fig2.update_layout(height=300, yaxis_title="Number of Codes")
         st.plotly_chart(fig2, use_container_width=True)
 
-        st.caption(f"{len(all_scores)} of {len(declarable)} codes had non-zero similarity to \"{query}\".")
+        st.caption(f'{len(all_scores)} of {len(declarable)} codes had non-zero similarity to "{query}".')

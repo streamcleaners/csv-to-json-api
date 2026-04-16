@@ -22,14 +22,22 @@ prefs = load_preferential()
 geo = load_geo_areas()
 
 # Country-level stats
-country_prefs = prefs.groupby(["geographical_area_id", "geographical_area_description", "trade_agreement"]).agg(
-    commodity_lines=("commodity_code", "count"),
-).reset_index()
+country_prefs = (
+    prefs.groupby(["geographical_area_id", "geographical_area_description", "trade_agreement"])
+    .agg(
+        commodity_lines=("commodity_code", "count"),
+    )
+    .reset_index()
+)
 
-country_totals = prefs.groupby(["geographical_area_id", "geographical_area_description"]).agg(
-    total_lines=("commodity_code", "count"),
-    agreements=("trade_agreement", "nunique"),
-).reset_index()
+country_totals = (
+    prefs.groupby(["geographical_area_id", "geographical_area_description"])
+    .agg(
+        total_lines=("commodity_code", "count"),
+        agreements=("trade_agreement", "nunique"),
+    )
+    .reset_index()
+)
 
 # Merge ISO codes from geo areas
 country_geo = geo[geo["geographical_area_type"] == "country"][["geographical_area_id", "iso_alpha2_code"]].copy()
@@ -37,9 +45,18 @@ country_totals = country_totals.merge(country_geo, on="geographical_area_id", ho
 
 # ISO alpha-3 mapping for plotly choropleth (alpha-2 to alpha-3)
 iso_map = {
-    "AU": "AUS", "BD": "BGD", "CO": "COL", "PE": "PER", "EC": "ECU",
-    "KR": "KOR", "ZA": "ZAF", "JP": "JPN", "NO": "NOR", "VN": "VNM",
-    "GH": "GHA", "SG": "SGP",
+    "AU": "AUS",
+    "BD": "BGD",
+    "CO": "COL",
+    "PE": "PER",
+    "EC": "ECU",
+    "KR": "KOR",
+    "ZA": "ZAF",
+    "JP": "JPN",
+    "NO": "NOR",
+    "VN": "VNM",
+    "GH": "GHA",
+    "SG": "SGP",
 }
 country_totals["iso_alpha3"] = country_totals["iso_alpha2_code"].map(iso_map)
 
@@ -69,18 +86,26 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.subheader("Trade Agreements")
-    agreement_summary = prefs.groupby("trade_agreement").agg(
-        countries=("geographical_area_description", lambda x: ", ".join(sorted(x.unique()))),
-        commodity_lines=("commodity_code", "count"),
-        cumulation=("cumulation_type", "first"),
-    ).reset_index()
+    agreement_summary = (
+        prefs.groupby("trade_agreement")
+        .agg(
+            countries=("geographical_area_description", lambda x: ", ".join(sorted(x.unique()))),
+            commodity_lines=("commodity_code", "count"),
+            cumulation=("cumulation_type", "first"),
+        )
+        .reset_index()
+    )
     st.dataframe(agreement_summary, use_container_width=True, hide_index=True)
 
 with col2:
     st.subheader("Coverage by Country")
     st.dataframe(
         country_totals[["geographical_area_description", "total_lines", "agreements"]].rename(
-            columns={"geographical_area_description": "Country", "total_lines": "Preferential Lines", "agreements": "Agreements"}
+            columns={
+                "geographical_area_description": "Country",
+                "total_lines": "Preferential Lines",
+                "agreements": "Agreements",
+            }
         ),
         use_container_width=True,
         hide_index=True,
@@ -105,20 +130,22 @@ all_nodes = agreements + [f"Ch. {c}" for c in chapters]
 source_idx = [agreements.index(a) for a in flows["trade_agreement"]]
 target_idx = [len(agreements) + chapters.index(c) for c in flows["chapter"]]
 
-fig = go.Figure(go.Sankey(
-    node={
-        "pad": 15,
-        "thickness": 20,
-        "label": all_nodes,
-        "color": ["#1f77b4"] * len(agreements) + ["#ff7f0e"] * len(chapters),
-    },
-    link={
-        "source": source_idx,
-        "target": target_idx,
-        "value": flows["count"].tolist(),
-        "color": "rgba(31, 119, 180, 0.3)",
-    },
-))
+fig = go.Figure(
+    go.Sankey(
+        node={
+            "pad": 15,
+            "thickness": 20,
+            "label": all_nodes,
+            "color": ["#1f77b4"] * len(agreements) + ["#ff7f0e"] * len(chapters),
+        },
+        link={
+            "source": source_idx,
+            "target": target_idx,
+            "value": flows["count"].tolist(),
+            "color": "rgba(31, 119, 180, 0.3)",
+        },
+    )
+)
 fig.update_layout(title="Preferential Lines: Agreement → Chapter", height=500)
 st.plotly_chart(fig, use_container_width=True)
 
@@ -135,15 +162,20 @@ for _, row in grouped.iterrows():
     countries = row["geographical_area_description"]
     for i in range(len(countries)):
         for j in range(i + 1, len(countries)):
-            edges.append({
-                "from": countries[i],
-                "to": countries[j],
-                "agreement": row["trade_agreement"],
-            })
+            edges.append(
+                {
+                    "from": countries[i],
+                    "to": countries[j],
+                    "agreement": row["trade_agreement"],
+                }
+            )
 
 if edges:
     edges_df = pd.DataFrame(edges)
-    st.dataframe(edges_df.rename(columns={"from": "Country A", "to": "Country B", "agreement": "Agreement"}),
-                 use_container_width=True, hide_index=True)
+    st.dataframe(
+        edges_df.rename(columns={"from": "Country A", "to": "Country B", "agreement": "Agreement"}),
+        use_container_width=True,
+        hide_index=True,
+    )
 else:
     st.info("No multi-country cumulation links found in the data.")

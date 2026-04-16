@@ -23,11 +23,7 @@ st.title("📊 Quota Exhaustion Dashboard")
 quotas = load_quotas()
 
 # Deduplicate to one row per quota order number
-quota_summary = (
-    quotas.groupby("quota_order_number")
-    .first()
-    .reset_index()
-)
+quota_summary = quotas.groupby("quota_order_number").first().reset_index()
 
 
 def status_colour(fill_rate):
@@ -50,8 +46,15 @@ st.divider()
 # Quota table
 st.subheader("All Quotas")
 display_df = quota_summary[
-    ["quota_order_number", "quota_description", "geographical_area_description",
-     "opening_balance_volume", "opening_balance_unit", "fill_rate_percent", "status"]
+    [
+        "quota_order_number",
+        "quota_description",
+        "geographical_area_description",
+        "opening_balance_volume",
+        "opening_balance_unit",
+        "fill_rate_percent",
+        "status",
+    ]
 ].copy()
 display_df["indicator"] = display_df["fill_rate_percent"].apply(status_colour)
 display_df = display_df[["indicator"] + [c for c in display_df.columns if c != "indicator"]]
@@ -65,26 +68,28 @@ cols = st.columns(min(len(quota_summary), 4))
 for i, (_, q) in enumerate(quota_summary.iterrows()):
     col = cols[i % len(cols)]
     with col:
-        fig = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=q["fill_rate_percent"],
-            title={"text": q["quota_order_number"]},
-            gauge={
-                "axis": {"range": [0, 100]},
-                "bar": {"color": "darkblue"},
-                "steps": [
-                    {"range": [0, 60], "color": "#d4edda"},
-                    {"range": [60, 90], "color": "#fff3cd"},
-                    {"range": [90, 100], "color": "#f8d7da"},
-                ],
-                "threshold": {
-                    "line": {"color": "red", "width": 4},
-                    "thickness": 0.75,
-                    "value": 90,
+        fig = go.Figure(
+            go.Indicator(
+                mode="gauge+number",
+                value=q["fill_rate_percent"],
+                title={"text": q["quota_order_number"]},
+                gauge={
+                    "axis": {"range": [0, 100]},
+                    "bar": {"color": "darkblue"},
+                    "steps": [
+                        {"range": [0, 60], "color": "#d4edda"},
+                        {"range": [60, 90], "color": "#fff3cd"},
+                        {"range": [90, 100], "color": "#f8d7da"},
+                    ],
+                    "threshold": {
+                        "line": {"color": "red", "width": 4},
+                        "thickness": 0.75,
+                        "value": 90,
+                    },
                 },
-            },
-            number={"suffix": "%"},
-        ))
+                number={"suffix": "%"},
+            )
+        )
         fig.update_layout(height=250, margin={"t": 60, "b": 20, "l": 30, "r": 30})
         st.plotly_chart(fig, use_container_width=True)
 
@@ -95,7 +100,9 @@ st.subheader("Fill Rate Forecast")
 selected_quota = st.selectbox(
     "Select a quota to forecast",
     quota_summary["quota_order_number"].tolist(),
-    format_func=lambda x: f"{x} — {quota_summary[quota_summary['quota_order_number'] == x].iloc[0]['quota_description']}",
+    format_func=lambda x: (
+        f"{x} — {quota_summary[quota_summary['quota_order_number'] == x].iloc[0]['quota_description']}"
+    ),
 )
 
 q = quota_summary[quota_summary["quota_order_number"] == selected_quota].iloc[0]
@@ -133,17 +140,31 @@ if pd.notna(period_start) and pd.notna(last_alloc):
 
         # Find predicted exhaustion date
         exhaustion_day = (100 - model.intercept_) / model.coef_[0] if model.coef_[0] > 0 else None
-        exhaustion_date = period_start + timedelta(days=int(exhaustion_day)) if exhaustion_day and exhaustion_day <= total_days else None
+        exhaustion_date = (
+            period_start + timedelta(days=int(exhaustion_day))
+            if exhaustion_day and exhaustion_day <= total_days
+            else None
+        )
 
         fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=dates, y=fill_rates, mode="lines+markers",
-            name="Actual", line={"color": "blue"},
-        ))
-        fig.add_trace(go.Scatter(
-            x=future_dates, y=y_future, mode="lines",
-            name="Forecast", line={"color": "red", "dash": "dash"},
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=dates,
+                y=fill_rates,
+                mode="lines+markers",
+                name="Actual",
+                line={"color": "blue"},
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=future_dates,
+                y=y_future,
+                mode="lines",
+                name="Forecast",
+                line={"color": "red", "dash": "dash"},
+            )
+        )
         fig.add_hline(y=90, line_dash="dot", line_color="orange", annotation_text="Critical threshold (90%)")
         fig.add_hline(y=100, line_dash="solid", line_color="red", annotation_text="Exhausted")
 

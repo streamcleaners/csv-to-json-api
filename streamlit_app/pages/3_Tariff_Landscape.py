@@ -28,7 +28,9 @@ certs = load_certificates()
 mfn = measures[measures["measure_type_id"] == 103].copy()
 mfn["chapter"] = mfn["commodity_code"].astype(str).str[:2]
 mfn["commodity_code_description"] = mfn["commodity_code_description"].astype(str)
-mfn["chapter_label"] = mfn["chapter"].astype(str) + " — " + mfn["commodity_code_description"].str.split("--").str[0].str.strip()
+mfn["chapter_label"] = (
+    mfn["chapter"].astype(str) + " — " + mfn["commodity_code_description"].str.split("--").str[0].str.strip()
+)
 
 # --- Duty rate distribution ---
 st.subheader("Duty Rate Distribution")
@@ -36,7 +38,9 @@ col1, col2 = st.columns(2)
 
 with col1:
     fig = px.histogram(
-        mfn, x="duty_amount", nbins=20,
+        mfn,
+        x="duty_amount",
+        nbins=20,
         title="Histogram of MFN Duty Rates",
         labels={"duty_amount": "Duty Rate"},
         color_discrete_sequence=["#1f77b4"],
@@ -45,6 +49,7 @@ with col1:
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
+
     def duty_band(rate):
         if rate == 0:
             return "Zero-rated"
@@ -59,7 +64,9 @@ with col2:
     band_counts.columns = ["band", "count"]
 
     fig = px.pie(
-        band_counts, values="count", names="band",
+        band_counts,
+        values="count",
+        names="band",
         title="Commodity Codes by Duty Band",
         color_discrete_sequence=px.colors.sequential.Blues_r,
     )
@@ -70,22 +77,28 @@ st.divider()
 # --- Heatmap: chapter vs duty type ---
 st.subheader("Duty Rates by Chapter")
 
-chapter_stats = mfn.groupby("chapter").agg(
-    mean_duty=("duty_amount", "mean"),
-    max_duty=("duty_amount", "max"),
-    count=("commodity_code", "count"),
-    pct_zero=("duty_amount", lambda x: (x == 0).mean() * 100),
-).reset_index()
+chapter_stats = (
+    mfn.groupby("chapter")
+    .agg(
+        mean_duty=("duty_amount", "mean"),
+        max_duty=("duty_amount", "max"),
+        count=("commodity_code", "count"),
+        pct_zero=("duty_amount", lambda x: (x == 0).mean() * 100),
+    )
+    .reset_index()
+)
 
-fig = go.Figure(data=go.Heatmap(
-    z=[chapter_stats["mean_duty"].values],
-    x=chapter_stats["chapter"].values,
-    y=["Mean Duty Rate"],
-    colorscale="RdYlGn_r",
-    text=[[f"{v:.1f}%" for v in chapter_stats["mean_duty"].values]],
-    texttemplate="%{text}",
-    hovertemplate="Chapter %{x}<br>Mean duty: %{z:.1f}%<extra></extra>",
-))
+fig = go.Figure(
+    data=go.Heatmap(
+        z=[chapter_stats["mean_duty"].values],
+        x=chapter_stats["chapter"].values,
+        y=["Mean Duty Rate"],
+        colorscale="RdYlGn_r",
+        text=[[f"{v:.1f}%" for v in chapter_stats["mean_duty"].values]],
+        texttemplate="%{text}",
+        hovertemplate="Chapter %{x}<br>Mean duty: %{z:.1f}%<extra></extra>",
+    )
+)
 fig.update_layout(
     title="Mean MFN Duty Rate by Commodity Chapter",
     xaxis_title="Chapter",
@@ -98,7 +111,9 @@ st.divider()
 
 # --- Clustering ---
 st.subheader("Tariff Profile Clustering")
-st.markdown("Commodities clustered by duty amount, duty type, number of preferential agreements, and certificate requirements.")
+st.markdown(
+    "Commodities clustered by duty amount, duty type, number of preferential agreements, and certificate requirements."
+)
 
 # Build feature matrix
 pref_counts = prefs.groupby("commodity_code").size().reset_index(name="n_prefs")
@@ -128,7 +143,9 @@ if len(X) >= 3:
     features["pc2"] = coords[:, 1]
 
     fig = px.scatter(
-        features, x="pc1", y="pc2",
+        features,
+        x="pc1",
+        y="pc2",
         color="cluster",
         hover_data=["commodity_code", "duty_amount", "n_prefs", "n_certs"],
         title="Commodity Clusters (PCA projection)",

@@ -38,9 +38,7 @@ def _fetch(resource: str, **params) -> pd.DataFrame:
             body = json.loads(resp.read().decode())
     except URLError as exc:
         st.error(
-            f"Could not reach the API at `{API_BASE_URL}`. "
-            f"Make sure it is running (`pixi run serve`).\n\n"
-            f"Error: {exc}"
+            f"Could not reach the API at `{API_BASE_URL}`. Make sure it is running (`pixi run serve`).\n\nError: {exc}"
         )
         st.stop()
 

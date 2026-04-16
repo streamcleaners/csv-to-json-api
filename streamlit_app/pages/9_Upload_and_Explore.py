@@ -74,6 +74,7 @@ if df.empty:
 # Schema detection
 # ---------------------------------------------------------------------------
 
+
 def classify_columns(df: pd.DataFrame) -> dict:
     """Classify each column by its detected type."""
     col_types = {}
@@ -133,10 +134,12 @@ for col in datetime_cols:
 st.divider()
 st.subheader("📋 Detected Schema")
 
-schema_df = pd.DataFrame([
-    {"Column": col, "Detected Type": col_types[col], "Non-null": df[col].notna().sum(), "Unique": df[col].nunique()}
-    for col in df.columns
-])
+schema_df = pd.DataFrame(
+    [
+        {"Column": col, "Detected Type": col_types[col], "Non-null": df[col].notna().sum(), "Unique": df[col].nunique()}
+        for col in df.columns
+    ]
+)
 st.dataframe(schema_df, use_container_width=True, hide_index=True)
 
 # ---------------------------------------------------------------------------
@@ -168,7 +171,9 @@ if numeric_cols:
                 col_name = numeric_cols[idx]
                 with col_widget:
                     fig = px.histogram(
-                        df, x=col_name, nbins=20,
+                        df,
+                        x=col_name,
+                        nbins=20,
                         title=f"Distribution of {col_name}",
                         color_discrete_sequence=["#1f77b4"],
                     )
@@ -184,7 +189,8 @@ if numeric_cols:
             text_auto=".2f",
             color_continuous_scale="RdBu_r",
             title="Numeric Column Correlations",
-            zmin=-1, zmax=1,
+            zmin=-1,
+            zmax=1,
         )
         fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
@@ -202,7 +208,9 @@ if categorical_cols:
                 counts.columns = [col_name, "count"]
                 with col_widget:
                     fig = px.bar(
-                        counts, x=col_name, y="count",
+                        counts,
+                        x=col_name,
+                        y="count",
                         title=f"Top values: {col_name}",
                         color_discrete_sequence=["#ff7f0e"],
                     )
@@ -218,7 +226,9 @@ if datetime_cols and numeric_cols:
     ts_df = df[[date_col, value_col]].dropna().sort_values(date_col)
     if not ts_df.empty:
         fig = px.line(
-            ts_df, x=date_col, y=value_col,
+            ts_df,
+            x=date_col,
+            y=value_col,
             title=f"{value_col} over {date_col}",
         )
         fig.update_layout(height=400)
@@ -237,7 +247,9 @@ if len(numeric_cols) >= 2:
         color_col = st.selectbox("Colour by", color_options)
 
     fig = px.scatter(
-        df, x=x_col, y=y_col,
+        df,
+        x=x_col,
+        y=y_col,
         color=None if color_col == "None" else color_col,
         title=f"{y_col} vs {x_col}",
         hover_data=df.columns.tolist()[:5],

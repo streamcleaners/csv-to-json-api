@@ -33,9 +33,7 @@ selected_code = st.selectbox(
 )
 
 # Get MFN rate
-mfn_row = measures[
-    (measures["commodity_code"] == selected_code) & (measures["measure_type_id"] == 103)
-]
+mfn_row = measures[(measures["commodity_code"] == selected_code) & (measures["measure_type_id"] == 103)]
 
 # Get preferential rates
 pref_rows = prefs[prefs["commodity_code"] == selected_code]
@@ -69,14 +67,16 @@ else:
             fig = go.Figure()
 
             # MFN bar for reference
-            fig.add_trace(go.Bar(
-                name="MFN Rate",
-                x=selected_countries,
-                y=[mfn["duty_amount"]] * len(selected_countries),
-                marker_color="#d62728",
-                text=[mfn["duty_expression"]] * len(selected_countries),
-                textposition="outside",
-            ))
+            fig.add_trace(
+                go.Bar(
+                    name="MFN Rate",
+                    x=selected_countries,
+                    y=[mfn["duty_amount"]] * len(selected_countries),
+                    marker_color="#d62728",
+                    text=[mfn["duty_expression"]] * len(selected_countries),
+                    textposition="outside",
+                )
+            )
 
             # Preferential bars
             pref_amounts = []
@@ -90,14 +90,16 @@ else:
                     pref_amounts.append(mfn["duty_amount"])
                     pref_texts.append("N/A")
 
-            fig.add_trace(go.Bar(
-                name="Preferential Rate",
-                x=selected_countries,
-                y=pref_amounts,
-                marker_color="#2ca02c",
-                text=pref_texts,
-                textposition="outside",
-            ))
+            fig.add_trace(
+                go.Bar(
+                    name="Preferential Rate",
+                    x=selected_countries,
+                    y=pref_amounts,
+                    marker_color="#2ca02c",
+                    text=pref_texts,
+                    textposition="outside",
+                )
+            )
 
             fig.update_layout(
                 barmode="group",
@@ -123,18 +125,26 @@ else:
             st.divider()
             st.subheader("Detail")
             detail = comparison[
-                ["geographical_area_description", "trade_agreement",
-                 "preferential_duty_rate", "mfn_duty_rate", "preference_margin",
-                 "rules_of_origin_reference", "cumulation_type"]
-            ].rename(columns={
-                "geographical_area_description": "Country",
-                "trade_agreement": "Agreement",
-                "preferential_duty_rate": "Preferential Rate",
-                "mfn_duty_rate": "MFN Rate",
-                "preference_margin": "Margin",
-                "rules_of_origin_reference": "Rules of Origin",
-                "cumulation_type": "Cumulation",
-            })
+                [
+                    "geographical_area_description",
+                    "trade_agreement",
+                    "preferential_duty_rate",
+                    "mfn_duty_rate",
+                    "preference_margin",
+                    "rules_of_origin_reference",
+                    "cumulation_type",
+                ]
+            ].rename(
+                columns={
+                    "geographical_area_description": "Country",
+                    "trade_agreement": "Agreement",
+                    "preferential_duty_rate": "Preferential Rate",
+                    "mfn_duty_rate": "MFN Rate",
+                    "preference_margin": "Margin",
+                    "rules_of_origin_reference": "Rules of Origin",
+                    "cumulation_type": "Cumulation",
+                }
+            )
             st.dataframe(detail, use_container_width=True, hide_index=True)
 
             # Quota info
@@ -142,9 +152,17 @@ else:
                 st.divider()
                 st.subheader("📦 Applicable Quotas")
                 st.dataframe(
-                    quota_rows[["quota_order_number", "quota_description",
-                                "geographical_area_description", "opening_balance_volume",
-                                "opening_balance_unit", "fill_rate_percent", "status"]],
+                    quota_rows[
+                        [
+                            "quota_order_number",
+                            "quota_description",
+                            "geographical_area_description",
+                            "opening_balance_volume",
+                            "opening_balance_unit",
+                            "fill_rate_percent",
+                            "status",
+                        ]
+                    ],
                     use_container_width=True,
                     hide_index=True,
                 )

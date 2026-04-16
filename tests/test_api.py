@@ -9,6 +9,7 @@ client = TestClient(app)
 
 # ── Discovery ──────────────────────────────────────────────────────────────
 
+
 class TestRoot:
     def test_returns_datasets(self):
         resp = client.get("/")
@@ -28,6 +29,7 @@ class TestRoot:
 
 
 # ── Collection queries ─────────────────────────────────────────────────────
+
 
 class TestGetCollection:
     def test_returns_data(self):
@@ -87,6 +89,7 @@ class TestGetCollection:
 
 # ── Single record ──────────────────────────────────────────────────────────
 
+
 class TestGetRecord:
     def test_get_by_index(self):
         resp = client.get("/api/commodities/0")
@@ -104,6 +107,7 @@ class TestGetRecord:
 
 # ── Reload ─────────────────────────────────────────────────────────────────
 
+
 class TestReload:
     def test_reload_returns_ok(self):
         resp = client.post("/reload")
@@ -114,6 +118,7 @@ class TestReload:
 
 
 # ── Convert (stateless) ───────────────────────────────────────────────────
+
 
 class TestConvert:
     def test_convert_csv(self):
@@ -149,9 +154,11 @@ class TestConvert:
 
 # ── Upload ─────────────────────────────────────────────────────────────────
 
+
 class TestUpload:
     def test_upload_creates_dataset(self, tmp_path, monkeypatch):
         import app.main as main_mod
+
         monkeypatch.setattr(main_mod, "DATA_DIR", tmp_path)
 
         csv_content = b"x,y\n1,a\n2,b\n3,c\n"
@@ -176,6 +183,7 @@ class TestUpload:
 
     def test_upload_sanitises_filename(self, tmp_path, monkeypatch):
         import app.main as main_mod
+
         monkeypatch.setattr(main_mod, "DATA_DIR", tmp_path)
 
         csv_content = b"col\nval\n"
@@ -199,6 +207,7 @@ class TestUpload:
 
     def test_upload_rejects_empty_csv(self, tmp_path, monkeypatch):
         import app.main as main_mod
+
         monkeypatch.setattr(main_mod, "DATA_DIR", tmp_path)
 
         resp = client.post(
@@ -209,6 +218,7 @@ class TestUpload:
 
     def test_upload_saves_file_to_disk(self, tmp_path, monkeypatch):
         import app.main as main_mod
+
         monkeypatch.setattr(main_mod, "DATA_DIR", tmp_path)
 
         csv_content = b"a\n1\n"

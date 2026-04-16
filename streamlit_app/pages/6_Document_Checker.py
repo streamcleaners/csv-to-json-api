@@ -77,7 +77,9 @@ st.plotly_chart(fig, use_container_width=True)
 st.subheader("Requirements by Measure Type")
 measure_counts = certs.groupby("measure_type_description").size().reset_index(name="count")
 fig = px.pie(
-    measure_counts, values="count", names="measure_type_description",
+    measure_counts,
+    values="count",
+    names="measure_type_description",
     title="Document Requirements by Control Type",
     color_discrete_sequence=px.colors.qualitative.Set2,
 )
