@@ -10,7 +10,7 @@ output "lambda_function_name" {
 
 output "streamlit_url" {
   description = "Streamlit dashboard URL"
-  value       = "http://${aws_instance.streamlit.public_ip}:8501"
+  value       = "http://${aws_eip.streamlit.public_ip}:8501"
 }
 
 output "streamlit_instance_id" {

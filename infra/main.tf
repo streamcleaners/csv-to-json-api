@@ -229,3 +229,11 @@ resource "aws_instance" "streamlit" {
     Name = "${var.project_name}-streamlit"
   }
 }
+
+resource "aws_eip" "streamlit" {
+  instance = aws_instance.streamlit.id
+
+  tags = {
+    Name = "${var.project_name}-streamlit-eip"
+  }
+}
