@@ -61,7 +61,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install fastapi uvicorn streamlit plotly scikit-learn pandas numpy
+          pip install fastapi uvicorn streamlit plotly scikit-learn pandas numpy boto3
           pip install httpx pytest
 
       - name: Run API import check
