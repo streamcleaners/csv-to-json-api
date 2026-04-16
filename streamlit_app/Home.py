@@ -35,5 +35,8 @@ st.markdown(
 
     ---
     *Data is entirely fictional and for demonstration purposes only.*
+
+    **Note:** This dashboard fetches data from the FastAPI backend.
+    Make sure the API is running (`pixi run serve`) before using the dashboard.
     """
 )
