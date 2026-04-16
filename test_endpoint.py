@@ -10,8 +10,9 @@ from __future__ import annotations
 import json
 import subprocess
 import urllib.request
+from pathlib import Path
 
-CSV_CONTENT = b"name,age,active\nAlice,30,TRUE\nBob,25,FALSE\nCharlie,,TRUE\n"
+CSV_FILE = Path("data/commodities.csv")
 
 API_URL = (
     subprocess.check_output(
@@ -22,15 +23,17 @@ API_URL = (
     + "/api/convert"
 )
 
+csv_bytes = CSV_FILE.read_bytes()
+
 boundary = "----TestBoundary123"
 body = (
     (
         f"--{boundary}\r\n"
-        f'Content-Disposition: form-data; name="file"; filename="test.csv"\r\n'
+        f'Content-Disposition: form-data; name="file"; filename="{CSV_FILE.name}"\r\n'
         f"Content-Type: text/csv\r\n"
         f"\r\n"
     ).encode()
-    + CSV_CONTENT
+    + csv_bytes
     + f"\r\n--{boundary}--\r\n".encode()
 )
 

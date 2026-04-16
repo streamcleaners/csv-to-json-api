@@ -2,7 +2,7 @@
 authors = ["Natasha Boyse <natasha.boyse@digital.trade.gov.uk>"]
 channels = ["conda-forge"]
 name = "csv-to-json-api"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
