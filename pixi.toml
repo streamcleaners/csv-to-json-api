@@ -6,7 +6,7 @@ platforms = ["osx-arm64"]
 version = "0.1.0"
 
 [tasks]
-serve = "uvicorn app.main:app --reload --port 8000"
+serve = "uvicorn app.main:app --reload --port 8002"
 dashboard = "streamlit run streamlit_app/Home.py"
 
 [dependencies]
