@@ -1,6 +1,5 @@
 """Shared fixtures for the test suite."""
 
-import csv
 import pytest
 from pathlib import Path
 
