@@ -104,61 +104,113 @@ query = st.text_input(
 if query:
     query_vec = vectoriser.transform([query])
     scores = cosine_similarity(query_vec, tfidf_matrix).flatten()
-    top_idx = scores.argsort()[-5:][::-1]
+
+    # Get top 10 for the chart, top 5 for the detail cards
+    top_idx = scores.argsort()[-10:][::-1]
 
     results = []
     for i in top_idx:
         row = declarable.iloc[i]
+        chapter = str(row["commodity_code"])[:2]
         results.append({
             "commodity_code": row["commodity_code"],
             "description": row["description"],
-            "similarity": float(scores[i]),
+            "similarity": round(float(scores[i]) * 100, 1),  # as percentage
+            "chapter": chapter,
+            "label": f"{row['commodity_code']} — {row['description'][:40]}",
         })
 
     results_df = pd.DataFrame(results)
 
-    col1, col2 = st.columns([2, 3])
+    # --- Summary metrics ---
+    best = results_df.iloc[0]
+    col_m1, col_m2, col_m3 = st.columns(3)
+    col_m1.metric("Best Match", best["commodity_code"])
+    col_m2.metric("Similarity", f"{best['similarity']}%")
+    col_m3.metric("Chapter", best["chapter"])
 
-    with col1:
-        st.subheader("Top 5 Matches")
-        for _, r in results_df.iterrows():
-            pct = f"{r['similarity']:.1%}"
-            st.markdown(f"**`{r['commodity_code']}`** — {r['description']}  \n*Similarity: {pct}*")
+    st.divider()
 
-    with col2:
-        fig = px.bar(
-            results_df,
-            x="similarity",
-            y="commodity_code",
-            orientation="h",
-            text=results_df["similarity"].apply(lambda x: f"{x:.1%}"),
-            labels={"similarity": "Similarity", "commodity_code": "Commodity Code"},
-            title="Match Similarity",
-            color="similarity",
-            color_continuous_scale="Blues",
+    # --- Horizontal bar chart (top 10) ---
+    st.subheader("Top 10 Matches by Similarity")
+
+    fig = px.bar(
+        results_df,
+        x="similarity",
+        y="label",
+        orientation="h",
+        text=results_df["similarity"].apply(lambda x: f"{x:.1f}%"),
+        labels={"similarity": "Similarity (%)", "label": ""},
+        color="similarity",
+        color_continuous_scale="Blues",
+        hover_data={"commodity_code": True, "description": True, "similarity": True, "label": False},
+    )
+    fig.update_layout(
+        yaxis=dict(autorange="reversed", tickfont=dict(size=11)),
+        xaxis=dict(range=[0, max(results_df["similarity"].max() * 1.2, 5)]),
+        height=400,
+        showlegend=False,
+        coloraxis_showscale=False,
+        margin=dict(l=10),
+    )
+    fig.update_traces(textposition="outside")
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.divider()
+
+    # --- Detail cards for top 5 ---
+    st.subheader("Top 5 — Detail")
+    top5 = results_df.head(5)
+
+    for idx, r in top5.iterrows():
+        with st.expander(f"**{r['commodity_code']}** — {r['description']} ({r['similarity']}%)", expanded=(idx == 0)):
+            # Hierarchy tree
+            all_comms = load_commodities()
+            chain = []
+            current = r["commodity_code"]
+            while current:
+                match_row = all_comms[all_comms["commodity_code"] == current]
+                if match_row.empty:
+                    break
+                crow = match_row.iloc[0]
+                chain.append({
+                    "code": current,
+                    "description": crow["description"],
+                    "indent": int(crow["commodity_code_indent"]),
+                })
+                current = crow["parent_commodity_code"] if pd.notna(crow["parent_commodity_code"]) else None
+
+            chain.reverse()
+            st.markdown("**Classification hierarchy:**")
+            for item in chain:
+                indent = "&nbsp;" * 6 * item["indent"]
+                if item["code"] == r["commodity_code"]:
+                    st.markdown(f"{indent}📌 **`{item['code']}`** {item['description']}", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"{indent}`{item['code']}` {item['description']}", unsafe_allow_html=True)
+
+    st.divider()
+
+    # --- Similarity distribution across all codes ---
+    st.subheader("Similarity Distribution")
+    st.markdown("How your query scored against all declarable commodity codes.")
+
+    all_scores = pd.DataFrame({
+        "commodity_code": declarable["commodity_code"],
+        "similarity": (scores * 100).round(1),
+    })
+    all_scores = all_scores[all_scores["similarity"] > 0].sort_values("similarity", ascending=False)
+
+    if all_scores.empty:
+        st.info("No commodity codes had any similarity to your query. Try different terms.")
+    else:
+        fig2 = px.histogram(
+            all_scores, x="similarity", nbins=20,
+            title="Distribution of Similarity Scores (non-zero only)",
+            labels={"similarity": "Similarity (%)", "count": "Commodity Codes"},
+            color_discrete_sequence=["#1f77b4"],
         )
-        fig.update_layout(yaxis=dict(autorange="reversed"), showlegend=False)
-        st.plotly_chart(fig, use_container_width=True)
+        fig2.update_layout(height=300, yaxis_title="Number of Codes")
+        st.plotly_chart(fig2, use_container_width=True)
 
-    # Hierarchy tree for top match
-    st.subheader("Commodity Hierarchy")
-    top_code = results_df.iloc[0]["commodity_code"]
-    all_comms = load_commodities()
-    chain = []
-    current = top_code
-    while current:
-        match = all_comms[all_comms["commodity_code"] == current]
-        if match.empty:
-            break
-        row = match.iloc[0]
-        chain.append({
-            "code": current,
-            "description": row["description"],
-            "indent": int(row["commodity_code_indent"]),
-        })
-        current = row["parent_commodity_code"] if pd.notna(row["parent_commodity_code"]) else None
-
-    chain.reverse()
-    for item in chain:
-        prefix = "→ " * item["indent"]
-        st.markdown(f"{prefix}**`{item['code']}`** {item['description']}")
+        st.caption(f"{len(all_scores)} of {len(declarable)} codes had non-zero similarity to \"{query}\".")
