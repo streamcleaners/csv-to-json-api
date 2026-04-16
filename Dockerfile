@@ -23,6 +23,8 @@ RUN pip install --upgrade pip && \
     pip install \
     fastapi>=0.135.3 \
     uvicorn>=0.44.0 \
+    python-multipart>=0.0.12 \
+    mangum>=0.19.0 \
     streamlit>=1.56.0 \
     plotly>=6.7.0 \
     scikit-learn>=1.8.0 \
