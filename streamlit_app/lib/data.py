@@ -6,8 +6,8 @@ CSV files directly. This decouples the dashboard from the file system and
 means we can later swap in CSV uploads, a database, or any other backend
 without changing the Streamlit code.
 
-The API base URL defaults to http://127.0.0.1:8000 and can be overridden
-with the API_BASE_URL environment variable.
+The API base URL defaults to the deployed AWS API Gateway endpoint and can
+be overridden with the API_BASE_URL environment variable.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import json
 import pandas as pd
 import streamlit as st
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://127.0.0.1:8002")
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://qk011cty71.execute-api.eu-west-2.amazonaws.com")
 
 
 def _fetch(resource: str, **params) -> pd.DataFrame:
