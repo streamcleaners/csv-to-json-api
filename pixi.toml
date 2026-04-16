@@ -13,6 +13,7 @@ lint = "ruff check ."
 format = "ruff format --check ."
 deploy = "bash infra/deploy.sh"
 deploy-streamlit = "bash infra/deploy_streamlit.sh"
+seed-data = "bash infra/seed_data.sh"
 
 [dependencies]
 python = ">=3.14.4,<3.15"

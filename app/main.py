@@ -2,94 +2,76 @@
 
 Two modes of operation:
 1. Stateless: POST /api/convert with a CSV file, get JSON back.
-2. Stored: Upload a CSV to /api/upload, it gets saved to the data directory
+2. Stored: Upload a CSV to POST /api/upload, it gets saved to S3
    and becomes a queryable dataset at GET /api/{resource}.
-
-The parsing logic lives in app.parser.
 """
 
 from __future__ import annotations
 
-import os
 import re
-from pathlib import Path
-from typing import Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.responses import JSONResponse
-from starlette.requests import Request
+
+if TYPE_CHECKING:
+    from starlette.requests import Request
 
 from app.parser import parse_csv
+from app.s3 import list_datasets, read_csv, write_csv
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
-
-# ---------------------------------------------------------------------------
-# Dataset storage
-# ---------------------------------------------------------------------------
-datasets: dict[str, list[dict]] = {}
-
-
-def _discover_datasets() -> None:
-    """Scan DATA_DIR for .csv files and load them into memory."""
-    datasets.clear()
-    if not DATA_DIR.is_dir():
-        return
-    for csv_path in sorted(DATA_DIR.glob("*.csv")):
-        with open(csv_path, encoding="utf-8-sig") as fh:
-            text = fh.read()
-        datasets[csv_path.stem] = parse_csv(text)
-
-
-_discover_datasets()
-
-# ---------------------------------------------------------------------------
-# App
-# ---------------------------------------------------------------------------
 app = FastAPI(
     title="CSV-to-JSON API",
-    description=(
-        "Generic RESTful API that serves CSV files as JSON. "
-        "Upload new CSVs and they become queryable endpoints automatically."
-    ),
+    description="Upload CSVs to S3, query them as JSON endpoints.",
     version="0.2.0",
 )
 
 
 # ---------------------------------------------------------------------------
-# Routes — Discovery
+# Routes - Discovery
 # ---------------------------------------------------------------------------
+
 
 @app.get("/", tags=["discovery"])
-def root():
-    """List every available dataset with its record count and columns."""
-    return {
-        "status": "ok",
-        "datasets": {
-            name: {
-                "records": len(rows),
-                "columns": list(rows[0].keys()) if rows else [],
-                "endpoint": f"/api/{name}",
-            }
-            for name, rows in datasets.items()
-        },
-    }
+def root() -> dict[str, Any]:
+    """List every available dataset with its record count and columns.
+
+    Returns:
+        A dict with status and dataset metadata.
+    """
+    datasets = {}
+    for name in list_datasets():
+        rows = parse_csv(read_csv(name))
+        datasets[name] = {
+            "records": len(rows),
+            "columns": list(rows[0].keys()) if rows else [],
+            "endpoint": f"/api/{name}",
+        }
+    return {"status": "ok", "datasets": datasets}
 
 
 # ---------------------------------------------------------------------------
-# Routes — Stateless convert
+# Routes - Stateless convert
 # ---------------------------------------------------------------------------
+
 
 @app.post("/api/convert", tags=["convert"])
 async def convert(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
-    """Parse a CSV file and return JSON without storing it."""
+    """Parse a CSV file and return JSON without storing it.
+
+    Args:
+        file: The uploaded CSV file.
+
+    Returns:
+        A dict with filename, record count, columns, and parsed data.
+
+    Raises:
+        HTTPException: If the file is not a .csv.
+    """
     if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="File must be a .csv")
 
-    content = await file.read()
-    text = content.decode("utf-8-sig")
+    text = (await file.read()).decode("utf-8-sig")
     rows = parse_csv(text)
 
     return {
@@ -101,33 +83,34 @@ async def convert(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Routes — Upload and store
+# Routes - Upload and store
 # ---------------------------------------------------------------------------
+
 
 @app.post("/api/upload", tags=["upload"])
 async def upload(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
-    """Upload a CSV file, save it to the data directory, and register it as a dataset."""
+    """Upload a CSV file to S3 and register it as a queryable dataset.
+
+    Args:
+        file: The uploaded CSV file.
+
+    Returns:
+        A dict with the resource name, endpoint, record count, and columns.
+
+    Raises:
+        HTTPException: If the file is not a .csv or is empty.
+    """
     if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="File must be a .csv")
 
-    content = await file.read()
-    text = content.decode("utf-8-sig")
+    text = (await file.read()).decode("utf-8-sig")
     rows = parse_csv(text)
 
     if not rows:
         raise HTTPException(status_code=400, detail="CSV file is empty or has no valid rows")
 
-    # Sanitise filename to a safe resource name
-    stem = Path(file.filename).stem
-    resource_name = re.sub(r"[^a-zA-Z0-9_]", "_", stem).lower().strip("_")
-
-    # Save to data directory
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    dest = DATA_DIR / f"{resource_name}.csv"
-    dest.write_text(text, encoding="utf-8")
-
-    # Register in memory
-    datasets[resource_name] = rows
+    resource_name = re.sub(r"[^a-zA-Z0-9_]", "_", file.filename.removesuffix(".csv")).lower().strip("_")
+    write_csv(resource_name, text)
 
     return {
         "status": "ok",
@@ -138,39 +121,35 @@ async def upload(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
     }
 
 
-@app.post("/reload", tags=["admin"])
-def reload_datasets():
-    """Re-scan the data directory and reload all CSVs."""
-    _discover_datasets()
-    return {"status": "ok", "datasets_loaded": list(datasets.keys())}
-
-
 # ---------------------------------------------------------------------------
-# Routes — Dataset querying
+# Routes - Dataset querying
 # ---------------------------------------------------------------------------
+
 
 def _filtered_response(
     rows: list[dict],
     limit: int,
     offset: int,
-    fields: str | None,
     filters: dict[str, str] | None = None,
 ) -> dict[str, Any]:
-    filtered = rows
+    """Apply filters and pagination to a list of rows.
 
+    Args:
+        rows: The full dataset rows.
+        limit: Max records to return.
+        offset: Number of records to skip.
+        filters: Column-value filters to apply.
+
+    Returns:
+        A paginated response dict.
+    """
+    filtered = rows
     if filters:
         for col, val in filters.items():
-            filtered = [
-                r for r in filtered
-                if str(r.get(col, "")).lower() == val.lower()
-            ]
+            filtered = [r for r in filtered if str(r.get(col, "")).lower() == val.lower()]
 
     total = len(filtered)
     page = filtered[offset : offset + limit]
-
-    if fields:
-        keep = [f.strip() for f in fields.split(",")]
-        page = [{k: v for k, v in row.items() if k in keep} for row in page]
 
     return {
         "total": total,
@@ -186,47 +165,49 @@ def get_collection(
     resource: str,
     _limit: int = Query(default=100, ge=1, le=10000, alias="_limit"),
     _offset: int = Query(default=0, ge=0, alias="_offset"),
-    _fields: str | None = Query(default=None, alias="_fields"),
-):
-    """Return records from a stored dataset with filtering and pagination."""
-    if resource not in datasets:
-        raise HTTPException(status_code=404, detail=f"Dataset '{resource}' not found")
-    return _filtered_response(datasets[resource], _limit, _offset, _fields)
+) -> dict[str, Any]:
+    """Return records from a stored dataset with pagination.
 
+    Args:
+        resource: The dataset name.
+        _limit: Max records to return.
+        _offset: Number of records to skip.
 
-@app.get("/api/{resource}/{index}", tags=["data"])
-def get_record(resource: str, index: int):
-    """Return a single record by its positional index (0-based)."""
-    if resource not in datasets:
+    Returns:
+        A paginated response dict.
+
+    Raises:
+        HTTPException: If the dataset is not found.
+    """
+    if resource not in list_datasets():
         raise HTTPException(status_code=404, detail=f"Dataset '{resource}' not found")
-    rows = datasets[resource]
-    if index < 0 or index >= len(rows):
-        raise HTTPException(status_code=404, detail=f"Index {index} out of range (0-{len(rows) - 1})")
-    return rows[index]
+    rows = parse_csv(read_csv(resource))
+    return _filtered_response(rows, _limit, _offset)
 
 
 # ---------------------------------------------------------------------------
-# Middleware — arbitrary query-param filtering
+# Middleware - arbitrary query-param filtering
 # ---------------------------------------------------------------------------
+
 
 @app.middleware("http")
-async def filter_middleware(request: Request, call_next):
+async def filter_middleware(request: Request, call_next: Any) -> JSONResponse:
     """Intercept GET /api/{resource} and extract column filters from query params."""
     path = request.url.path
     method = request.method
 
     if method == "GET" and path.startswith("/api/") and path.count("/") == 2:
         resource = path.split("/")[2]
-        if resource in datasets:
+        available = list_datasets()
+        if resource in available:
             params = dict(request.query_params)
             limit = int(params.pop("_limit", "100"))
             offset = int(params.pop("_offset", "0"))
-            fields = params.pop("_fields", None)
             filters = {k: v for k, v in params.items() if not k.startswith("_")}
 
-            body = _filtered_response(
-                datasets[resource], limit, offset, fields, filters or None
-            )
-            return JSONResponse(content=body)
+            if filters:
+                rows = parse_csv(read_csv(resource))
+                body = _filtered_response(rows, limit, offset, filters or None)
+                return JSONResponse(content=body)
 
     return await call_next(request)
