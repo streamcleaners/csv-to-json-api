@@ -166,7 +166,9 @@ resource "aws_instance" "streamlit" {
     set -euo pipefail
     exec > >(tee /var/log/streamlit-setup.log) 2>&1
 
-    dnf install -y docker git
+    dnf install -y docker git amazon-ssm-agent
+    systemctl enable amazon-ssm-agent
+    systemctl start amazon-ssm-agent
     systemctl enable docker
     systemctl start docker
 
