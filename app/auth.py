@@ -40,9 +40,7 @@ def _load_keys() -> set[str]:
         path = Path(keys_file)
         if path.is_file():
             keys.update(
-                line.strip()
-                for line in path.read_text().splitlines()
-                if line.strip() and not line.startswith("#")
+                line.strip() for line in path.read_text().splitlines() if line.strip() and not line.startswith("#")
             )
 
     return keys
