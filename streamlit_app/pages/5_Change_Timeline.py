@@ -5,6 +5,7 @@ Timeline visualisation with anomaly detection.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import streamlit as st
@@ -96,8 +97,18 @@ else:
 st.divider()
 st.subheader("Change Detail")
 st.dataframe(
-    filtered[["change_id", "change_type", "effective_date", "old_commodity_code",
-              "new_commodity_code", "old_description", "new_description", "reason"]],
+    filtered[
+        [
+            "change_id",
+            "change_type",
+            "effective_date",
+            "old_commodity_code",
+            "new_commodity_code",
+            "old_description",
+            "new_description",
+            "reason",
+        ]
+    ],
     use_container_width=True,
     hide_index=True,
 )

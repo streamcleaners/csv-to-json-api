@@ -5,6 +5,7 @@ Composite protection score ranking by commodity chapter.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import streamlit as st
@@ -33,26 +34,38 @@ mfn = measures[measures["measure_type_id"] == 103].copy()
 mfn["chapter"] = mfn["commodity_code"].astype(str).str[:2]
 
 # --- Build chapter-level features ---
-chapter_duty = mfn.groupby("chapter").agg(
-    mean_duty=("duty_amount", "mean"),
-    max_duty=("duty_amount", "max"),
-    n_commodities=("commodity_code", "nunique"),
-).reset_index()
+chapter_duty = (
+    mfn.groupby("chapter")
+    .agg(
+        mean_duty=("duty_amount", "mean"),
+        max_duty=("duty_amount", "max"),
+        n_commodities=("commodity_code", "nunique"),
+    )
+    .reset_index()
+)
 
 # Quota pressure: count of quota lines per chapter
 quotas_ch = quotas.copy()
 quotas_ch["chapter"] = quotas_ch["commodity_code"].astype(str).str[:2]
-quota_pressure = quotas_ch.groupby("chapter").agg(
-    n_quota_lines=("commodity_code", "count"),
-    mean_fill_rate=("fill_rate_percent", "mean"),
-).reset_index()
+quota_pressure = (
+    quotas_ch.groupby("chapter")
+    .agg(
+        n_quota_lines=("commodity_code", "count"),
+        mean_fill_rate=("fill_rate_percent", "mean"),
+    )
+    .reset_index()
+)
 
 # Certificate burden
 certs_ch = certs.copy()
 certs_ch["chapter"] = certs_ch["commodity_code"].astype(str).str[:2]
-cert_burden = certs_ch.groupby("chapter").agg(
-    n_cert_requirements=("commodity_code", "count"),
-).reset_index()
+cert_burden = (
+    certs_ch.groupby("chapter")
+    .agg(
+        n_cert_requirements=("commodity_code", "count"),
+    )
+    .reset_index()
+)
 
 # Merge
 index_df = chapter_duty.merge(quota_pressure, on="chapter", how="left")
@@ -131,14 +144,16 @@ with col2:
             values = [row[c] for c in radar_components]
             values.append(values[0])  # close the polygon
 
-            fig.add_trace(go.Scatterpolar(
-                r=values,
-                theta=radar_labels + [radar_labels[0]],
-                fill="toself",
-                name=chapter_label,
-                line_color=colours[i % len(colours)],
-                opacity=0.6,
-            ))
+            fig.add_trace(
+                go.Scatterpolar(
+                    r=values,
+                    theta=radar_labels + [radar_labels[0]],
+                    fill="toself",
+                    name=chapter_label,
+                    line_color=colours[i % len(colours)],
+                    opacity=0.6,
+                )
+            )
 
         fig.update_layout(
             polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
@@ -169,14 +184,25 @@ st.markdown(
 # Raw data
 st.divider()
 st.subheader("Raw Data")
-display = index_df[["chapter_label", "protection_score", "mean_duty", "max_duty",
-                     "mean_fill_rate", "n_cert_requirements", "n_commodities"]].rename(columns={
-    "chapter_label": "Chapter",
-    "protection_score": "Score",
-    "mean_duty": "Mean Duty (norm)",
-    "max_duty": "Max Duty (norm)",
-    "mean_fill_rate": "Quota Pressure (norm)",
-    "n_cert_requirements": "Cert Burden (norm)",
-    "n_commodities": "Commodities",
-})
+display = index_df[
+    [
+        "chapter_label",
+        "protection_score",
+        "mean_duty",
+        "max_duty",
+        "mean_fill_rate",
+        "n_cert_requirements",
+        "n_commodities",
+    ]
+].rename(
+    columns={
+        "chapter_label": "Chapter",
+        "protection_score": "Score",
+        "mean_duty": "Mean Duty (norm)",
+        "max_duty": "Max Duty (norm)",
+        "mean_fill_rate": "Quota Pressure (norm)",
+        "n_cert_requirements": "Cert Burden (norm)",
+        "n_commodities": "Commodities",
+    }
+)
 st.dataframe(display, use_container_width=True, hide_index=True)

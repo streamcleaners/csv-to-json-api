@@ -52,9 +52,7 @@ def _load_keys() -> set[str]:
         path = Path(keys_file)
         if path.is_file():
             keys.update(
-                line.strip()
-                for line in path.read_text().splitlines()
-                if line.strip() and not line.startswith("#")
+                line.strip() for line in path.read_text().splitlines() if line.strip() and not line.startswith("#")
             )
 
     return keys
@@ -67,6 +65,7 @@ AUTH_ENABLED = len(VALID_KEYS) > 0
 # ---------------------------------------------------------------------------
 # Dependency
 # ---------------------------------------------------------------------------
+
 
 async def require_api_key(api_key: str | None = Security(_api_key_header)) -> str | None:
     """

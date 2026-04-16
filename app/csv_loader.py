@@ -44,7 +44,4 @@ def load_csv(path: Path) -> list[dict]:
     """Read a single CSV file and return a list of row dicts."""
     with open(path, newline="", encoding="utf-8-sig") as fh:
         reader = csv.DictReader(fh)
-        return [
-            {key: _coerce(val) for key, val in row.items() if key is not None}
-            for row in reader
-        ]
+        return [{key: _coerce(val) for key, val in row.items() if key is not None} for row in reader]

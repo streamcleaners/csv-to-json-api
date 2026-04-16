@@ -63,6 +63,7 @@ app = FastAPI(
 # Routes — Discovery
 # ---------------------------------------------------------------------------
 
+
 @app.get("/", tags=["discovery"])
 def root():
     """List every available dataset with its record count and columns."""
@@ -83,6 +84,7 @@ def root():
 # ---------------------------------------------------------------------------
 # Routes — Stateless convert
 # ---------------------------------------------------------------------------
+
 
 @app.post("/api/convert", tags=["convert"])
 async def convert(
@@ -108,6 +110,7 @@ async def convert(
 # ---------------------------------------------------------------------------
 # Routes — Upload and store
 # ---------------------------------------------------------------------------
+
 
 @app.post("/api/upload", tags=["upload"])
 async def upload(
@@ -157,6 +160,7 @@ def reload_datasets(_key: str | None = Depends(require_api_key)):
 # Routes — Dataset querying
 # ---------------------------------------------------------------------------
 
+
 def _filtered_response(
     rows: list[dict],
     limit: int,
@@ -168,10 +172,7 @@ def _filtered_response(
 
     if filters:
         for col, val in filters.items():
-            filtered = [
-                r for r in filtered
-                if str(r.get(col, "")).lower() == val.lower()
-            ]
+            filtered = [r for r in filtered if str(r.get(col, "")).lower() == val.lower()]
 
     total = len(filtered)
     page = filtered[offset : offset + limit]
@@ -218,6 +219,7 @@ def get_record(resource: str, index: int, _key: str | None = Depends(require_api
 # Middleware — arbitrary query-param filtering
 # ---------------------------------------------------------------------------
 
+
 @app.middleware("http")
 async def filter_middleware(request: Request, call_next):
     """Intercept GET /api/{resource} and extract column filters from query params."""
@@ -244,9 +246,7 @@ async def filter_middleware(request: Request, call_next):
             fields = params.pop("_fields", None)
             filters = {k: v for k, v in params.items() if not k.startswith("_")}
 
-            body = _filtered_response(
-                datasets[resource], limit, offset, fields, filters or None
-            )
+            body = _filtered_response(datasets[resource], limit, offset, fields, filters or None)
             return JSONResponse(content=body)
 
     return await call_next(request)
