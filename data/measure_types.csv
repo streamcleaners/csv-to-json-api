@@ -1,0 +1,25 @@
+measure_type_id,measure_type_description,measure_type_series_id,measure_type_series_description,trade_movement_code,trade_movement_description,measure_component_applicable,order_number_capture_code
+103,"Third country duty",C,"Applicable duty",0,"Import",TRUE,
+105,"Non-preferential duty under end-use",C,"Applicable duty",0,"Import",TRUE,
+106,"Customs Union duty",C,"Applicable duty",0,"Import",TRUE,
+112,"Autonomous tariff suspension",C,"Applicable duty",0,"Import",TRUE,
+115,"Autonomous suspension under end-use",C,"Applicable duty",0,"Import",TRUE,
+117,"Suspension - Loss of Preferential Tariff Treatment",C,"Applicable duty",0,"Import",TRUE,
+119,"Airworthiness tariff suspension",C,"Applicable duty",0,"Import",TRUE,
+122,"Non-preferential tariff quota",C,"Applicable duty",0,"Import",TRUE,2
+123,"Non-preferential tariff quota under end-use",C,"Applicable duty",0,"Import",TRUE,2
+142,"Tariff preference",C,"Applicable duty",0,"Import",TRUE,
+143,"Tariff preference - subject to end-use",C,"Applicable duty",0,"Import",TRUE,
+145,"Tariff preference - subject to quota",C,"Applicable duty",0,"Import",TRUE,2
+146,"Tariff preference - subject to quota and end-use",C,"Applicable duty",0,"Import",TRUE,2
+277,"Anti-dumping duty (definitive)",D,"Anti-dumping/countervailing duty",0,"Import",TRUE,
+278,"Anti-dumping duty (provisional)",D,"Anti-dumping/countervailing duty",0,"Import",TRUE,
+695,"Additional duty on sugar",A,"Additional duty",0,"Import",TRUE,
+696,"Additional duty on flour",A,"Additional duty",0,"Import",TRUE,
+305,"Value added tax",J,"VAT",0,"Import",TRUE,
+306,"Excise duty",F,"Excise",0,"Import",TRUE,
+350,"Phytosanitary control",M,"Prohibition/restriction/surveillance",0,"Import",FALSE,
+355,"CITES control",M,"Prohibition/restriction/surveillance",0,"Import",FALSE,
+360,"Import control - IPAFFS",M,"Prohibition/restriction/surveillance",0,"Import",FALSE,
+465,"Export restriction",P,"Export measures",1,"Export",FALSE,
+475,"Export licence",P,"Export measures",1,"Export",FALSE,
