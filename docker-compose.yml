@@ -1,0 +1,54 @@
+services:
+  # FastAPI service for CSV-to-JSON API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: csv-to-json-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./app:/app/app
+    environment:
+      - DATA_DIR=/app/data
+      - PYTHONUNBUFFERED=1
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - csv-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Streamlit dashboard service
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: csv-to-json-dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./streamlit_app:/app/streamlit_app
+      - ./app:/app/app
+    environment:
+      - DATA_DIR=/app/data
+      - PYTHONUNBUFFERED=1
+    command: streamlit run streamlit_app/Home.py --server.port=8501 --server.address=0.0.0.0
+    networks:
+      - csv-network
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  csv-network:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local
