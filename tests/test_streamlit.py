@@ -1,7 +1,6 @@
 """Tests for the Streamlit frontend helper functions."""
 
-from unittest.mock import patch, MagicMock
-import pytest
+from unittest.mock import MagicMock, patch
 
 
 def _mock_response(json_data, status_code=200):
@@ -29,8 +28,8 @@ class TestFetchDatasets:
 
     @patch("app.streamlit_app.requests.get")
     def test_returns_empty_on_error(self, mock_get):
-        from requests.exceptions import ConnectionError
-        mock_get.side_effect = ConnectionError("refused")
+        from requests.exceptions import ConnectionError as RequestsConnectionError
+        mock_get.side_effect = RequestsConnectionError("refused")
         from app.streamlit_app import fetch_datasets
         fetch_datasets.clear()
         result = fetch_datasets()
@@ -64,8 +63,8 @@ class TestFetchCommodities:
 
     @patch("app.streamlit_app.requests.get")
     def test_returns_empty_on_error(self, mock_get):
-        from requests.exceptions import ConnectionError
-        mock_get.side_effect = ConnectionError("refused")
+        from requests.exceptions import ConnectionError as RequestsConnectionError
+        mock_get.side_effect = RequestsConnectionError("refused")
         from app.streamlit_app import fetch_commodities
         fetch_commodities.clear()
         result = fetch_commodities(limit=100, offset=0, filters={})

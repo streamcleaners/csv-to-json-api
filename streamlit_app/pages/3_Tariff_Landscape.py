@@ -5,18 +5,17 @@ Heatmaps, histograms, pie charts, and clustering of the tariff structure.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
-import pandas as pd
-import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-from streamlit_app.lib.data import load_measures, load_preferential, load_certificates
+from streamlit_app.lib.data import load_certificates, load_measures, load_preferential
 
 st.set_page_config(page_title="Tariff Landscape", page_icon="🗺️", layout="wide")
 st.title("🗺️ Tariff Landscape Overview")
@@ -50,9 +49,9 @@ with col2:
         if rate == 0:
             return "Zero-rated"
         elif rate <= 5:
-            return "Low (0–5%)"
+            return "Low (0-5%)"
         elif rate <= 12:
-            return "Medium (5–12%)"
+            return "Medium (5-12%)"
         return "High (>12%)"
 
     mfn["duty_band"] = mfn["duty_amount"].apply(duty_band)
@@ -91,7 +90,7 @@ fig.update_layout(
     title="Mean MFN Duty Rate by Commodity Chapter",
     xaxis_title="Chapter",
     height=200,
-    margin=dict(t=60, b=40),
+    margin={"t": 60, "b": 40},
 )
 st.plotly_chart(fig, use_container_width=True)
 

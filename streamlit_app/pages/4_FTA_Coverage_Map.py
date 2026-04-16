@@ -5,14 +5,15 @@ Interactive choropleth world map and Sankey diagram of preferential trade covera
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
 
-from streamlit_app.lib.data import load_preferential, load_geo_areas
+from streamlit_app.lib.data import load_geo_areas, load_preferential
 
 st.set_page_config(page_title="FTA Coverage Map", page_icon="🌍", layout="wide")
 st.title("🌍 FTA Coverage Map")
@@ -57,9 +58,9 @@ fig = px.choropleth(
     title="Number of Preferential Commodity Lines by Country",
 )
 fig.update_layout(
-    geo=dict(showframe=False, showcoastlines=True, projection_type="natural earth"),
+    geo={"showframe": False, "showcoastlines": True, "projection_type": "natural earth"},
     height=500,
-    margin=dict(t=60, b=20, l=0, r=0),
+    margin={"t": 60, "b": 20, "l": 0, "r": 0},
 )
 st.plotly_chart(fig, use_container_width=True)
 
@@ -105,18 +106,18 @@ source_idx = [agreements.index(a) for a in flows["trade_agreement"]]
 target_idx = [len(agreements) + chapters.index(c) for c in flows["chapter"]]
 
 fig = go.Figure(go.Sankey(
-    node=dict(
-        pad=15,
-        thickness=20,
-        label=all_nodes,
-        color=["#1f77b4"] * len(agreements) + ["#ff7f0e"] * len(chapters),
-    ),
-    link=dict(
-        source=source_idx,
-        target=target_idx,
-        value=flows["count"].tolist(),
-        color="rgba(31, 119, 180, 0.3)",
-    ),
+    node={
+        "pad": 15,
+        "thickness": 20,
+        "label": all_nodes,
+        "color": ["#1f77b4"] * len(agreements) + ["#ff7f0e"] * len(chapters),
+    },
+    link={
+        "source": source_idx,
+        "target": target_idx,
+        "value": flows["count"].tolist(),
+        "color": "rgba(31, 119, 180, 0.3)",
+    },
 ))
 fig.update_layout(title="Preferential Lines: Agreement → Chapter", height=500)
 st.plotly_chart(fig, use_container_width=True)

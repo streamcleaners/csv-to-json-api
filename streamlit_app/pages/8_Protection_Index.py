@@ -5,16 +5,15 @@ Composite protection score ranking by commodity chapter.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
-import pandas as pd
-import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
 from sklearn.preprocessing import MinMaxScaler
 
-from streamlit_app.lib.data import load_measures, load_quotas, load_certificates, load_preferential
+from streamlit_app.lib.data import load_certificates, load_measures, load_preferential, load_quotas
 
 st.set_page_config(page_title="Protection Index", page_icon="🛡️", layout="wide")
 st.title("🛡️ Tariff Protection Index")
@@ -59,7 +58,7 @@ index_df = chapter_duty.merge(quota_pressure, on="chapter", how="left")
 index_df = index_df.merge(cert_burden, on="chapter", how="left")
 index_df = index_df.fillna(0)
 
-# Normalise each component to 0–1
+# Normalise each component to 0-1
 components = ["mean_duty", "max_duty", "mean_fill_rate", "n_cert_requirements"]
 scaler = MinMaxScaler()
 if len(index_df) > 1:
@@ -100,7 +99,7 @@ fig = px.bar(
     labels={"protection_score": "Protection Score", "chapter_label": "Chapter"},
     title="Chapters Ranked by Composite Protection Score",
 )
-fig.update_layout(yaxis=dict(autorange="reversed"), height=450, showlegend=False)
+fig.update_layout(yaxis={"autorange": "reversed"}, height=450, showlegend=False)
 st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
@@ -133,7 +132,7 @@ with col2:
 
             fig.add_trace(go.Scatterpolar(
                 r=values,
-                theta=radar_labels + [radar_labels[0]],
+                theta=[*radar_labels, radar_labels[0]],
                 fill="toself",
                 name=chapter_label,
                 line_color=colours[i % len(colours)],
@@ -141,7 +140,7 @@ with col2:
             ))
 
         fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+            polar={"radialaxis": {"visible": True, "range": [0, 1]}},
             title="Protection Profile Comparison",
             height=450,
         )
@@ -152,7 +151,7 @@ st.divider()
 st.subheader("Methodology")
 st.markdown(
     """
-    The protection score is a weighted composite of four normalised (0–1) components:
+    The protection score is a weighted composite of four normalised (0-1) components:
 
     | Component | Weight | Source |
     |-----------|--------|--------|

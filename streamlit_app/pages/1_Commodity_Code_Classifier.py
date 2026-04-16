@@ -6,12 +6,12 @@ from a free-text product description.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.express as px
+import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -146,12 +146,12 @@ if query:
         hover_data={"commodity_code": True, "description": True, "similarity": True, "label": False},
     )
     fig.update_layout(
-        yaxis=dict(autorange="reversed", tickfont=dict(size=11)),
-        xaxis=dict(range=[0, max(results_df["similarity"].max() * 1.2, 5)]),
+        yaxis={"autorange": "reversed", "tickfont": {"size": 11}},
+        xaxis={"range": [0, max(results_df["similarity"].max() * 1.2, 5)]},
         height=400,
         showlegend=False,
         coloraxis_showscale=False,
-        margin=dict(l=10),
+        margin={"l": 10},
     )
     fig.update_traces(textposition="outside")
     st.plotly_chart(fig, use_container_width=True)

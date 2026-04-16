@@ -1,7 +1,6 @@
 """Tests for the CSV loader module."""
 
-from pathlib import Path
-from app.csv_loader import load_csv, _coerce
+from app.csv_loader import _coerce, load_csv
 
 
 class TestCoerce:

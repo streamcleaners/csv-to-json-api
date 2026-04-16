@@ -12,10 +12,10 @@ be overridden with the API_BASE_URL environment variable.
 
 from __future__ import annotations
 
-import os
-from urllib.request import urlopen, Request
-from urllib.error import URLError
 import json
+import os
+from urllib.error import URLError
+from urllib.request import Request, urlopen
 
 import pandas as pd
 import streamlit as st
@@ -133,8 +133,8 @@ def upload_csv(filename: str, content: bytes) -> dict:
     Upload a CSV file to the API. Returns the API response dict
     with resource name, endpoint, record count, and columns.
     """
-    import urllib.request
     import io
+    import urllib.request
 
     boundary = "----StreamlitUploadBoundary"
     body = io.BytesIO()

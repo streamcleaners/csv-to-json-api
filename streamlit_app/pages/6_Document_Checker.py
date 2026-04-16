@@ -5,11 +5,12 @@ Look up required certificates and licences by commodity code.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
 import pandas as pd
 import plotly.express as px
+import streamlit as st
 
 from streamlit_app.lib.data import load_certificates, load_commodities
 
@@ -24,7 +25,7 @@ st.subheader("Look Up by Commodity Code")
 
 declarable = comms[comms["declarable"] == True]  # noqa: E712
 code_options = declarable["commodity_code"].tolist()
-descriptions = dict(zip(declarable["commodity_code"], declarable["description"]))
+descriptions = dict(zip(declarable["commodity_code"], declarable["description"], strict=False))
 
 selected_code = st.selectbox(
     "Select a commodity code",

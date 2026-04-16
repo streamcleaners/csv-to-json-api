@@ -1,10 +1,8 @@
 """Tests for the FastAPI CSV-to-JSON API."""
 
-import io
-import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app, datasets, _discover_datasets, DATA_DIR
+from app.main import app, datasets
 
 client = TestClient(app)
 

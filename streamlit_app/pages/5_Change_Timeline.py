@@ -5,12 +5,11 @@ Timeline visualisation with anomaly detection.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
-import pandas as pd
 import plotly.express as px
-import numpy as np
+import streamlit as st
 
 from streamlit_app.lib.data import load_changes
 
@@ -46,7 +45,7 @@ fig = px.scatter(
     labels={"effective_date": "Effective Date", "change_type": "Change Type"},
     color_discrete_map=colour_map,
 )
-fig.update_traces(marker=dict(size=12))
+fig.update_traces(marker={"size": 12})
 fig.update_layout(height=350, showlegend=True)
 st.plotly_chart(fig, use_container_width=True)
 

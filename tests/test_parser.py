@@ -1,6 +1,6 @@
 """Tests for the CSV parser module (app.parser)."""
 
-from app.parser import parse_csv, _coerce
+from app.parser import _coerce, parse_csv
 
 
 class TestCoerce:

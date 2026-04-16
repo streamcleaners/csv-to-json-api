@@ -5,13 +5,15 @@ Gauge charts, fill-rate forecasting, and critical quota alerts.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
-import pandas as pd
+from datetime import timedelta
+
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
-from datetime import datetime, timedelta
+import streamlit as st
 
 from streamlit_app.lib.data import load_quotas
 
@@ -83,7 +85,7 @@ for i, (_, q) in enumerate(quota_summary.iterrows()):
             },
             number={"suffix": "%"},
         ))
-        fig.update_layout(height=250, margin=dict(t=60, b=20, l=30, r=30))
+        fig.update_layout(height=250, margin={"t": 60, "b": 20, "l": 30, "r": 30})
         st.plotly_chart(fig, use_container_width=True)
 
 # Forecast section
@@ -136,11 +138,11 @@ if pd.notna(period_start) and pd.notna(last_alloc):
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=dates, y=fill_rates, mode="lines+markers",
-            name="Actual", line=dict(color="blue"),
+            name="Actual", line={"color": "blue"},
         ))
         fig.add_trace(go.Scatter(
             x=future_dates, y=y_future, mode="lines",
-            name="Forecast", line=dict(color="red", dash="dash"),
+            name="Forecast", line={"color": "red", "dash": "dash"},
         ))
         fig.add_hline(y=90, line_dash="dot", line_color="orange", annotation_text="Critical threshold (90%)")
         fig.add_hline(y=100, line_dash="solid", line_color="red", annotation_text="Exhausted")
@@ -155,7 +157,7 @@ if pd.notna(period_start) and pd.notna(last_alloc):
             title=f"Fill Rate Forecast — {selected_quota}",
             xaxis_title="Date",
             yaxis_title="Fill Rate (%)",
-            yaxis=dict(range=[0, 105]),
+            yaxis={"range": [0, 105]},
             height=400,
         )
         st.plotly_chart(fig, use_container_width=True)

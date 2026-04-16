@@ -3,9 +3,9 @@ Streamlit frontend for the CSV-to-JSON API.
 Displays the Commodities dataset with search, filtering, and pagination.
 """
 
-import streamlit as st
-import requests
 import pandas as pd
+import requests
+import streamlit as st
 
 API_BASE = "http://localhost:8002"
 

@@ -5,13 +5,13 @@ Compare MFN and preferential duty rates across countries for a commodity.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
-import pandas as pd
 import plotly.graph_objects as go
+import streamlit as st
 
-from streamlit_app.lib.data import load_measures, load_preferential, load_quotas, load_commodities
+from streamlit_app.lib.data import load_commodities, load_measures, load_preferential, load_quotas
 
 st.set_page_config(page_title="Duty Comparison", page_icon="⚖️", layout="wide")
 st.title("⚖️ Duty Comparison Tool")
@@ -24,7 +24,7 @@ comms = load_commodities()
 # Commodity selector
 declarable = comms[comms["declarable"] == True]  # noqa: E712
 code_options = declarable["commodity_code"].tolist()
-descriptions = dict(zip(declarable["commodity_code"], declarable["description"]))
+descriptions = dict(zip(declarable["commodity_code"], declarable["description"], strict=False))
 
 selected_code = st.selectbox(
     "Select a commodity code",

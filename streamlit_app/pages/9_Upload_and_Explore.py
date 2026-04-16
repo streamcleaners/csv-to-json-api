@@ -6,14 +6,14 @@ based on the detected column types.
 
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.express as px
+import streamlit as st
 
-from streamlit_app.lib.data import upload_csv, list_datasets, fetch_dataset
+from streamlit_app.lib.data import fetch_dataset, list_datasets, upload_csv
 
 st.set_page_config(page_title="Upload & Explore", page_icon="📤", layout="wide")
 st.title("📤 Upload & Explore")
@@ -233,7 +233,7 @@ if len(numeric_cols) >= 2:
     with scatter_cols[1]:
         y_col = st.selectbox("Y axis", numeric_cols, index=min(1, len(numeric_cols) - 1))
     with scatter_cols[2]:
-        color_options = ["None"] + categorical_cols
+        color_options = ["None", *categorical_cols]
         color_col = st.selectbox("Colour by", color_options)
 
     fig = px.scatter(
