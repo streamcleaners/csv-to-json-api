@@ -20,7 +20,7 @@ import json
 import pandas as pd
 import streamlit as st
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://127.0.0.1:8002")
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://qk011cty71.execute-api.eu-west-2.amazonaws.com")
 API_KEY = os.environ.get("API_KEY", "")
 
 
