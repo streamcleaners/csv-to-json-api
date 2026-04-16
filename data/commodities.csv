@@ -1,87 +1,87 @@
 commodity_code,commodity_code_indent,description,parent_commodity_code,declarable,leaf,start_date,end_date
-0100000000,0,"Live animals",,,FALSE,FALSE,2021-01-01,
-0101000000,1,"Live horses, asses, mules and hinnies",0100000000,FALSE,FALSE,2021-01-01,
-0101210000,2,"Horses -- Pure-bred breeding animals",0101000000,FALSE,FALSE,2021-01-01,
-0101210010,3,"Horses -- Pure-bred breeding animals -- For racing",0101210000,TRUE,TRUE,2021-01-01,
-0101210090,3,"Horses -- Pure-bred breeding animals -- Other",0101210000,TRUE,TRUE,2021-01-01,
-0101290000,2,"Horses -- Other",0101000000,FALSE,FALSE,2021-01-01,
-0101290010,3,"Horses -- Other -- Weighing not more than 300 kg",0101290000,TRUE,TRUE,2021-01-01,
-0101290090,3,"Horses -- Other -- Weighing more than 300 kg",0101290000,TRUE,TRUE,2021-01-01,
-0101300000,2,"Asses",0101000000,TRUE,TRUE,2021-01-01,
-0101900000,2,"Mules and hinnies",0101000000,TRUE,TRUE,2021-01-01,
-0102000000,1,"Live bovine animals",0100000000,FALSE,FALSE,2021-01-01,
-0102210000,2,"Cattle -- Pure-bred breeding animals",0102000000,TRUE,TRUE,2021-01-01,
-0102290000,2,"Cattle -- Other",0102000000,FALSE,FALSE,2021-01-01,
-0102291010,3,"Cattle -- Other -- Domestic species weighing not more than 80 kg",0102290000,TRUE,TRUE,2021-01-01,
-0102291090,3,"Cattle -- Other -- Domestic species weighing more than 80 kg but not more than 160 kg",0102290000,TRUE,TRUE,2021-01-01,
-0200000000,0,"Meat and edible meat offal",,,FALSE,FALSE,2021-01-01,
-0201000000,1,"Meat of bovine animals, fresh or chilled",0200000000,FALSE,FALSE,2021-01-01,
-0201100000,2,"Carcasses and half-carcasses",0201000000,TRUE,TRUE,2021-01-01,
-0201200000,2,"Other cuts with bone in",0201000000,FALSE,FALSE,2021-01-01,
-0201200010,3,"Other cuts with bone in -- Compensated quarters",0201200000,TRUE,TRUE,2021-01-01,
-0201200090,3,"Other cuts with bone in -- Other",0201200000,TRUE,TRUE,2021-01-01,
-0201300000,2,"Boneless",0201000000,TRUE,TRUE,2021-01-01,
-0300000000,0,"Fish and crustaceans, molluscs and other aquatic invertebrates",,,FALSE,FALSE,2021-01-01,
-0301000000,1,"Live fish",0300000000,FALSE,FALSE,2021-01-01,
-0301110000,2,"Ornamental fish -- Freshwater",0301000000,TRUE,TRUE,2021-01-01,
-0301190000,2,"Ornamental fish -- Other",0301000000,TRUE,TRUE,2021-01-01,
-0301910000,2,"Trout (Salmo trutta, Oncorhynchus mykiss and others)",0301000000,TRUE,TRUE,2021-01-01,
-0301920000,2,"Eels (Anguilla spp.)",0301000000,TRUE,TRUE,2021-01-01,
-0301930000,2,"Carp (Cyprinus spp. and others)",0301000000,TRUE,TRUE,2021-01-01,
-0800000000,0,"Edible fruit and nuts; peel of citrus fruit or melons",,,FALSE,FALSE,2021-01-01,
-0803000000,1,"Bananas, including plantains, fresh or dried",0800000000,FALSE,FALSE,2021-01-01,
-0803100000,2,"Plantains",0803000000,FALSE,FALSE,2021-01-01,
-0803101000,3,"Plantains -- Fresh",0803100000,TRUE,TRUE,2021-01-01,
-0803109000,3,"Plantains -- Dried",0803100000,TRUE,TRUE,2021-01-01,
-0803900000,2,"Bananas -- Other",0803000000,FALSE,FALSE,2021-01-01,
-0803901000,3,"Bananas -- Fresh",0803900000,TRUE,TRUE,2021-01-01,
-0803909000,3,"Bananas -- Dried",0803900000,TRUE,TRUE,2021-01-01,
-2200000000,0,"Beverages, spirits and vinegar",,,FALSE,FALSE,2021-01-01,
-2204000000,1,"Wine of fresh grapes, including fortified wines",2200000000,FALSE,FALSE,2021-01-01,
-2204100000,2,"Sparkling wine",2204000000,FALSE,FALSE,2021-01-01,
-2204101100,3,"Sparkling wine -- Champagne",2204100000,TRUE,TRUE,2021-01-01,
-2204101900,3,"Sparkling wine -- Other",2204100000,TRUE,TRUE,2021-01-01,
-2204210000,2,"Wine in containers of 2 litres or less",2204000000,FALSE,FALSE,2021-01-01,
-2204211100,3,"Wine in containers of 2 litres or less -- Quality wine from specified regions",2204210000,TRUE,TRUE,2021-01-01,
-2204211900,3,"Wine in containers of 2 litres or less -- Other",2204210000,TRUE,TRUE,2021-01-01,
-2208000000,1,"Undenatured ethyl alcohol; spirits, liqueurs and other spirituous beverages",2200000000,FALSE,FALSE,2021-01-01,
-2208200000,2,"Spirits obtained by distilling grape wine or grape marc",2208000000,FALSE,FALSE,2021-01-01,
-2208201200,3,"Cognac",2208200000,TRUE,TRUE,2021-01-01,
-2208201400,3,"Armagnac",2208200000,TRUE,TRUE,2021-01-01,
-2208201800,3,"Other grape brandy",2208200000,TRUE,TRUE,2021-01-01,
-2208300000,2,"Whiskies",2208000000,FALSE,FALSE,2021-01-01,
-2208301100,3,"Bourbon whiskey",2208300000,TRUE,TRUE,2021-01-01,
-2208303000,3,"Scotch whisky -- Single malt",2208300000,TRUE,TRUE,2021-01-01,
-2208309000,3,"Whiskies -- Other",2208300000,TRUE,TRUE,2021-01-01,
-6100000000,0,"Articles of apparel and clothing accessories, knitted or crocheted",,,FALSE,FALSE,2021-01-01,
-6101000000,1,"Men's or boys' overcoats, car coats, capes, cloaks and similar articles, knitted or crocheted",6100000000,FALSE,FALSE,2021-01-01,
-6101200000,2,"Of cotton",6101000000,TRUE,TRUE,2021-01-01,
-6101300000,2,"Of man-made fibres",6101000000,TRUE,TRUE,2021-01-01,
-6101900000,2,"Of other textile materials",6101000000,TRUE,TRUE,2021-01-01,
-8400000000,0,"Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",,,FALSE,FALSE,2021-01-01,
-8471000000,1,"Automatic data-processing machines and units thereof",8400000000,FALSE,FALSE,2021-01-01,
-8471300000,2,"Portable automatic data-processing machines, weighing not more than 10 kg",8471000000,TRUE,TRUE,2021-01-01,
-8471410000,2,"Other automatic data-processing machines -- Comprising a CPU and input/output unit",8471000000,TRUE,TRUE,2021-01-01,
-8471490000,2,"Other automatic data-processing machines -- Other, presented as systems",8471000000,TRUE,TRUE,2021-01-01,
-8471500000,2,"Processing units other than those of 8471.41 or 8471.49",8471000000,TRUE,TRUE,2021-01-01,
-8471600000,2,"Input or output units, whether or not containing storage units in the same housing",8471000000,TRUE,TRUE,2021-01-01,
-8471700000,2,"Storage units",8471000000,TRUE,TRUE,2021-01-01,
-8471800000,2,"Other units of automatic data-processing machines",8471000000,TRUE,TRUE,2021-01-01,
-8471900000,2,"Other",8471000000,TRUE,TRUE,2021-01-01,
-8500000000,0,"Electrical machinery and equipment and parts thereof",,,FALSE,FALSE,2021-01-01,
-8517000000,1,"Telephone sets; other apparatus for transmission or reception of voice, images or data",8500000000,FALSE,FALSE,2021-01-01,
-8517120000,2,"Telephones for cellular networks or for other wireless networks",8517000000,FALSE,FALSE,2021-01-01,
-8517121000,3,"Telephones for cellular networks -- Smartphones",8517120000,TRUE,TRUE,2021-01-01,
-8517129000,3,"Telephones for cellular networks -- Other",8517120000,TRUE,TRUE,2021-01-01,
-8517620000,2,"Machines for the reception, conversion and transmission of voice, images or other data",8517000000,TRUE,TRUE,2021-01-01,
-8517700000,2,"Parts",8517000000,TRUE,TRUE,2021-01-01,
-9400000000,0,"Furniture; bedding, mattresses, cushions and similar stuffed furnishings",,,FALSE,FALSE,2021-01-01,
-9401000000,1,"Seats (other than those of heading 9402), whether or not convertible into beds, and parts thereof",9400000000,FALSE,FALSE,2021-01-01,
-9401300000,2,"Swivel seats with variable height adjustment",9401000000,TRUE,TRUE,2021-01-01,
-9401400000,2,"Seats other than garden seats or camping equipment, convertible into beds",9401000000,TRUE,TRUE,2021-01-01,
-9401610000,2,"Upholstered seats -- With wooden frames",9401000000,TRUE,TRUE,2021-01-01,
-9401690000,2,"Upholstered seats -- Other",9401000000,TRUE,TRUE,2021-01-01,
-9401710000,2,"Other seats -- With metal frames -- Upholstered",9401000000,TRUE,TRUE,2021-01-01,
-9401790000,2,"Other seats -- With metal frames -- Other",9401000000,TRUE,TRUE,2021-01-01,
-9401800000,2,"Other seats",9401000000,TRUE,TRUE,2021-01-01,
-9401900000,2,"Parts",9401000000,TRUE,TRUE,2021-01-01,
+0100000000,0,"Live animals",,,FALSE,FALSE,2021-01-01
+0101000000,1,"Live horses, asses, mules and hinnies",0100000000,FALSE,FALSE,2021-01-01
+0101210000,2,"Horses -- Pure-bred breeding animals",0101000000,FALSE,FALSE,2021-01-01
+0101210010,3,"Horses -- Pure-bred breeding animals -- For racing",0101210000,TRUE,TRUE,2021-01-01
+0101210090,3,"Horses -- Pure-bred breeding animals -- Other",0101210000,TRUE,TRUE,2021-01-01
+0101290000,2,"Horses -- Other",0101000000,FALSE,FALSE,2021-01-01
+0101290010,3,"Horses -- Other -- Weighing not more than 300 kg",0101290000,TRUE,TRUE,2021-01-01
+0101290090,3,"Horses -- Other -- Weighing more than 300 kg",0101290000,TRUE,TRUE,2021-01-01
+0101300000,2,"Asses",0101000000,TRUE,TRUE,2021-01-01
+0101900000,2,"Mules and hinnies",0101000000,TRUE,TRUE,2021-01-01
+0102000000,1,"Live bovine animals",0100000000,FALSE,FALSE,2021-01-01
+0102210000,2,"Cattle -- Pure-bred breeding animals",0102000000,TRUE,TRUE,2021-01-01
+0102290000,2,"Cattle -- Other",0102000000,FALSE,FALSE,2021-01-01
+0102291010,3,"Cattle -- Other -- Domestic species weighing not more than 80 kg",0102290000,TRUE,TRUE,2021-01-01
+0102291090,3,"Cattle -- Other -- Domestic species weighing more than 80 kg but not more than 160 kg",0102290000,TRUE,TRUE,2021-01-01
+0200000000,0,"Meat and edible meat offal",,,FALSE,FALSE,2021-01-01
+0201000000,1,"Meat of bovine animals, fresh or chilled",0200000000,FALSE,FALSE,2021-01-01
+0201100000,2,"Carcasses and half-carcasses",0201000000,TRUE,TRUE,2021-01-01
+0201200000,2,"Other cuts with bone in",0201000000,FALSE,FALSE,2021-01-01
+0201200010,3,"Other cuts with bone in -- Compensated quarters",0201200000,TRUE,TRUE,2021-01-01
+0201200090,3,"Other cuts with bone in -- Other",0201200000,TRUE,TRUE,2021-01-01
+0201300000,2,"Boneless",0201000000,TRUE,TRUE,2021-01-01
+0300000000,0,"Fish and crustaceans, molluscs and other aquatic invertebrates",,,FALSE,FALSE,2021-01-01
+0301000000,1,"Live fish",0300000000,FALSE,FALSE,2021-01-01
+0301110000,2,"Ornamental fish -- Freshwater",0301000000,TRUE,TRUE,2021-01-01
+0301190000,2,"Ornamental fish -- Other",0301000000,TRUE,TRUE,2021-01-01
+0301910000,2,"Trout (Salmo trutta, Oncorhynchus mykiss and others)",0301000000,TRUE,TRUE,2021-01-01
+0301920000,2,"Eels (Anguilla spp.)",0301000000,TRUE,TRUE,2021-01-01
+0301930000,2,"Carp (Cyprinus spp. and others)",0301000000,TRUE,TRUE,2021-01-01
+0800000000,0,"Edible fruit and nuts; peel of citrus fruit or melons",,,FALSE,FALSE,2021-01-01
+0803000000,1,"Bananas, including plantains, fresh or dried",0800000000,FALSE,FALSE,2021-01-01
+0803100000,2,"Plantains",0803000000,FALSE,FALSE,2021-01-01
+0803101000,3,"Plantains -- Fresh",0803100000,TRUE,TRUE,2021-01-01
+0803109000,3,"Plantains -- Dried",0803100000,TRUE,TRUE,2021-01-01
+0803900000,2,"Bananas -- Other",0803000000,FALSE,FALSE,2021-01-01
+0803901000,3,"Bananas -- Fresh",0803900000,TRUE,TRUE,2021-01-01
+0803909000,3,"Bananas -- Dried",0803900000,TRUE,TRUE,2021-01-01
+2200000000,0,"Beverages, spirits and vinegar",,,FALSE,FALSE,2021-01-01
+2204000000,1,"Wine of fresh grapes, including fortified wines",2200000000,FALSE,FALSE,2021-01-01
+2204100000,2,"Sparkling wine",2204000000,FALSE,FALSE,2021-01-01
+2204101100,3,"Sparkling wine -- Champagne",2204100000,TRUE,TRUE,2021-01-01
+2204101900,3,"Sparkling wine -- Other",2204100000,TRUE,TRUE,2021-01-01
+2204210000,2,"Wine in containers of 2 litres or less",2204000000,FALSE,FALSE,2021-01-01
+2204211100,3,"Wine in containers of 2 litres or less -- Quality wine from specified regions",2204210000,TRUE,TRUE,2021-01-01
+2204211900,3,"Wine in containers of 2 litres or less -- Other",2204210000,TRUE,TRUE,2021-01-01
+2208000000,1,"Undenatured ethyl alcohol; spirits, liqueurs and other spirituous beverages",2200000000,FALSE,FALSE,2021-01-01
+2208200000,2,"Spirits obtained by distilling grape wine or grape marc",2208000000,FALSE,FALSE,2021-01-01
+2208201200,3,"Cognac",2208200000,TRUE,TRUE,2021-01-01
+2208201400,3,"Armagnac",2208200000,TRUE,TRUE,2021-01-01
+2208201800,3,"Other grape brandy",2208200000,TRUE,TRUE,2021-01-01
+2208300000,2,"Whiskies",2208000000,FALSE,FALSE,2021-01-01
+2208301100,3,"Bourbon whiskey",2208300000,TRUE,TRUE,2021-01-01
+2208303000,3,"Scotch whisky -- Single malt",2208300000,TRUE,TRUE,2021-01-01
+2208309000,3,"Whiskies -- Other",2208300000,TRUE,TRUE,2021-01-01
+6100000000,0,"Articles of apparel and clothing accessories, knitted or crocheted",,,FALSE,FALSE,2021-01-01
+6101000000,1,"Men's or boys' overcoats, car coats, capes, cloaks and similar articles, knitted or crocheted",6100000000,FALSE,FALSE,2021-01-01
+6101200000,2,"Of cotton",6101000000,TRUE,TRUE,2021-01-01
+6101300000,2,"Of man-made fibres",6101000000,TRUE,TRUE,2021-01-01
+6101900000,2,"Of other textile materials",6101000000,TRUE,TRUE,2021-01-01
+8400000000,0,"Nuclear reactors, boilers, machinery and mechanical appliances; parts thereof",,,FALSE,FALSE,2021-01-01
+8471000000,1,"Automatic data-processing machines and units thereof",8400000000,FALSE,FALSE,2021-01-01
+8471300000,2,"Portable automatic data-processing machines, weighing not more than 10 kg",8471000000,TRUE,TRUE,2021-01-01
+8471410000,2,"Other automatic data-processing machines -- Comprising a CPU and input/output unit",8471000000,TRUE,TRUE,2021-01-01
+8471490000,2,"Other automatic data-processing machines -- Other, presented as systems",8471000000,TRUE,TRUE,2021-01-01
+8471500000,2,"Processing units other than those of 8471.41 or 8471.49",8471000000,TRUE,TRUE,2021-01-01
+8471600000,2,"Input or output units, whether or not containing storage units in the same housing",8471000000,TRUE,TRUE,2021-01-01
+8471700000,2,"Storage units",8471000000,TRUE,TRUE,2021-01-01
+8471800000,2,"Other units of automatic data-processing machines",8471000000,TRUE,TRUE,2021-01-01
+8471900000,2,"Other",8471000000,TRUE,TRUE,2021-01-01
+8500000000,0,"Electrical machinery and equipment and parts thereof",,,FALSE,FALSE,2021-01-01
+8517000000,1,"Telephone sets; other apparatus for transmission or reception of voice, images or data",8500000000,FALSE,FALSE,2021-01-01
+8517120000,2,"Telephones for cellular networks or for other wireless networks",8517000000,FALSE,FALSE,2021-01-01
+8517121000,3,"Telephones for cellular networks -- Smartphones",8517120000,TRUE,TRUE,2021-01-01
+8517129000,3,"Telephones for cellular networks -- Other",8517120000,TRUE,TRUE,2021-01-01
+8517620000,2,"Machines for the reception, conversion and transmission of voice, images or other data",8517000000,TRUE,TRUE,2021-01-01
+8517700000,2,"Parts",8517000000,TRUE,TRUE,2021-01-01
+9400000000,0,"Furniture; bedding, mattresses, cushions and similar stuffed furnishings",,,FALSE,FALSE,2021-01-01
+9401000000,1,"Seats (other than those of heading 9402), whether or not convertible into beds, and parts thereof",9400000000,FALSE,FALSE,2021-01-01
+9401300000,2,"Swivel seats with variable height adjustment",9401000000,TRUE,TRUE,2021-01-01
+9401400000,2,"Seats other than garden seats or camping equipment, convertible into beds",9401000000,TRUE,TRUE,2021-01-01
+9401610000,2,"Upholstered seats -- With wooden frames",9401000000,TRUE,TRUE,2021-01-01
+9401690000,2,"Upholstered seats -- Other",9401000000,TRUE,TRUE,2021-01-01
+9401710000,2,"Other seats -- With metal frames -- Upholstered",9401000000,TRUE,TRUE,2021-01-01
+9401790000,2,"Other seats -- With metal frames -- Other",9401000000,TRUE,TRUE,2021-01-01
+9401800000,2,"Other seats",9401000000,TRUE,TRUE,2021-01-01
+9401900000,2,"Parts",9401000000,TRUE,TRUE,2021-01-01
