@@ -15,10 +15,11 @@ import re
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
+from app.auth import AUTH_ENABLED, VALID_KEYS, require_api_key
 from app.parser import parse_csv
 
 # ---------------------------------------------------------------------------
@@ -67,6 +68,7 @@ def root():
     """List every available dataset with its record count and columns."""
     return {
         "status": "ok",
+        "auth_enabled": AUTH_ENABLED,
         "datasets": {
             name: {
                 "records": len(rows),
@@ -83,7 +85,10 @@ def root():
 # ---------------------------------------------------------------------------
 
 @app.post("/api/convert", tags=["convert"])
-async def convert(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
+async def convert(
+    file: Annotated[UploadFile, File(...)],
+    _key: str | None = Depends(require_api_key),
+) -> dict[str, Any]:
     """Parse a CSV file and return JSON without storing it."""
     if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="File must be a .csv")
@@ -105,7 +110,10 @@ async def convert(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 @app.post("/api/upload", tags=["upload"])
-async def upload(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
+async def upload(
+    file: Annotated[UploadFile, File(...)],
+    _key: str | None = Depends(require_api_key),
+) -> dict[str, Any]:
     """Upload a CSV file, save it to the data directory, and register it as a dataset."""
     if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="File must be a .csv")
@@ -139,7 +147,7 @@ async def upload(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
 
 
 @app.post("/reload", tags=["admin"])
-def reload_datasets():
+def reload_datasets(_key: str | None = Depends(require_api_key)):
     """Re-scan the data directory and reload all CSVs."""
     _discover_datasets()
     return {"status": "ok", "datasets_loaded": list(datasets.keys())}
@@ -187,6 +195,7 @@ def get_collection(
     _limit: int = Query(default=100, ge=1, le=10000, alias="_limit"),
     _offset: int = Query(default=0, ge=0, alias="_offset"),
     _fields: str | None = Query(default=None, alias="_fields"),
+    _key: str | None = Depends(require_api_key),
 ):
     """Return records from a stored dataset with filtering and pagination."""
     if resource not in datasets:
@@ -195,7 +204,7 @@ def get_collection(
 
 
 @app.get("/api/{resource}/{index}", tags=["data"])
-def get_record(resource: str, index: int):
+def get_record(resource: str, index: int, _key: str | None = Depends(require_api_key)):
     """Return a single record by its positional index (0-based)."""
     if resource not in datasets:
         raise HTTPException(status_code=404, detail=f"Dataset '{resource}' not found")
@@ -218,6 +227,17 @@ async def filter_middleware(request: Request, call_next):
     if method == "GET" and path.startswith("/api/") and path.count("/") == 2:
         resource = path.split("/")[2]
         if resource in datasets:
+            # Check auth if enabled
+            if AUTH_ENABLED:
+                key = request.headers.get("X-API-Key")
+                if not key:
+                    return JSONResponse(
+                        status_code=401,
+                        content={"detail": "Missing API key. Provide it in the X-API-Key header."},
+                    )
+                if key not in VALID_KEYS:
+                    return JSONResponse(status_code=403, content={"detail": "Invalid API key."})
+
             params = dict(request.query_params)
             limit = int(params.pop("_limit", "100"))
             offset = int(params.pop("_offset", "0"))

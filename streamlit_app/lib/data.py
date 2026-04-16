@@ -20,7 +20,16 @@ import json
 import pandas as pd
 import streamlit as st
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "https://qk011cty71.execute-api.eu-west-2.amazonaws.com")
+API_BASE_URL = os.environ.get("API_BASE_URL", "http://127.0.0.1:8002")
+API_KEY = os.environ.get("API_KEY", "")
+
+
+def _headers() -> dict[str, str]:
+    """Build request headers, including API key if configured."""
+    h: dict[str, str] = {}
+    if API_KEY:
+        h["X-API-Key"] = API_KEY
+    return h
 
 
 def _fetch(resource: str, **params) -> pd.DataFrame:
@@ -33,7 +42,7 @@ def _fetch(resource: str, **params) -> pd.DataFrame:
     url = f"{API_BASE_URL}/api/{resource}?{qs}"
 
     try:
-        req = Request(url)
+        req = Request(url, headers=_headers())
         with urlopen(req, timeout=10) as resp:
             body = json.loads(resp.read().decode())
     except URLError as exc:
@@ -148,7 +157,10 @@ def upload_csv(filename: str, content: bytes) -> dict:
     req = urllib.request.Request(
         f"{API_BASE_URL}/api/upload",
         data=data,
-        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+        headers={
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            **_headers(),
+        },
         method="POST",
     )
 
@@ -162,7 +174,7 @@ def upload_csv(filename: str, content: bytes) -> dict:
 def list_datasets() -> dict:
     """Fetch the list of all available datasets from the API root."""
     try:
-        req = Request(f"{API_BASE_URL}/")
+        req = Request(f"{API_BASE_URL}/", headers=_headers())
         with urlopen(req, timeout=10) as resp:
             body = json.loads(resp.read().decode())
         return body.get("datasets", {})

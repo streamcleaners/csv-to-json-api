@@ -69,15 +69,16 @@ GET /                              → list all datasets
 GET /api/commodities               → all commodity codes
 GET /api/commodities?declarable=true&_limit=10
 GET /api/trade_quotas?status=Open
-GET /api/measures_on_declarable_commodities?commodity_code=0201100000
+POST /api/upload                   → upload a CSV, creates new dataset
+POST /api/convert                  → stateless CSV → JSON
 POST /reload                       → hot-reload new data
 ```
 
-Supports filtering, pagination, and field projection.
+Supports filtering, pagination, field projection, and CSV upload.
 
 ---
 
-## The Dashboard — 8 Pages
+## The Dashboard — 9 Pages
 
 ```
  1. Commodity Code Classifier     ← ML
@@ -88,6 +89,7 @@ Supports filtering, pagination, and field projection.
  6. Document Requirements Checker
  7. Duty Comparison Tool
  8. Tariff Protection Index       ← composite scoring
+ 9. Upload & Explore              ← auto-generated viz
 ```
 
 ---
@@ -226,6 +228,7 @@ ML            scikit-learn    Lightweight, no GPU needed
 Viz           Plotly          Interactive charts, maps
 Packaging     Pixi            Reproducible environments
 Containers    Docker Compose  API + dashboard as services
+CI/CD         GitHub Actions  Lint, test, security, Docker build
 ```
 
 ---
@@ -251,11 +254,14 @@ API at localhost:8000, dashboard at localhost:8501.
 
 ## What's Next
 
-- **CSV upload endpoint** — POST a file, it becomes a new dataset
+- ~~CSV upload endpoint~~ ✅ Done
+- ~~Auto-generated visualisations~~ ✅ Done
+- ~~GitHub Actions CI/CD~~ ✅ Done
+- ~~Docker Compose~~ ✅ Done
+- ~~Authentication layer~~ ✅ Done (API key via X-API-Key header)
 - **Sentence embeddings** — replace TF-IDF for semantic search
 - **Real data feed** — pull from data.api.trade.gov.uk
 - **Seasonal forecasting** — Prophet for quota predictions
-- **Auth** — API keys or OAuth2 on the FastAPI layer
 - **Redis caching** — for multi-user deployments
 
 ---

@@ -13,6 +13,8 @@ services:
     environment:
       - DATA_DIR=/app/data
       - PYTHONUNBUFFERED=1
+      # Uncomment to enable API key auth:
+      # - API_KEYS=your-secret-key-here
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - csv-network
@@ -39,6 +41,8 @@ services:
       - DATA_DIR=/app/data
       - API_BASE_URL=http://api:8000
       - PYTHONUNBUFFERED=1
+      # Must match the API_KEYS value on the api service:
+      # - API_KEY=your-secret-key-here
     command: streamlit run streamlit_app/Home.py --server.port=8501 --server.address=0.0.0.0
     networks:
       - csv-network
