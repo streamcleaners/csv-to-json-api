@@ -11,12 +11,13 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Annotated, Any
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.responses import JSONResponse
 
 if TYPE_CHECKING:
     from starlette.requests import Request
 
+from app.auth import AUTH_ENABLED, VALID_KEYS, require_api_key
 from app.parser import parse_csv
 from app.s3 import list_datasets, read_csv, write_csv
 
@@ -47,7 +48,7 @@ def root() -> dict[str, Any]:
             "columns": list(rows[0].keys()) if rows else [],
             "endpoint": f"/api/{name}",
         }
-    return {"status": "ok", "datasets": datasets}
+    return {"status": "ok", "auth_enabled": AUTH_ENABLED, "datasets": datasets}
 
 
 # ---------------------------------------------------------------------------
@@ -56,7 +57,10 @@ def root() -> dict[str, Any]:
 
 
 @app.post("/api/convert", tags=["convert"])
-async def convert(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
+async def convert(
+    file: Annotated[UploadFile, File(...)],
+    _key: str | None = Depends(require_api_key),
+) -> dict[str, Any]:
     """Parse a CSV file and return JSON without storing it.
 
     Args:
@@ -88,7 +92,10 @@ async def convert(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
 
 
 @app.post("/api/upload", tags=["upload"])
-async def upload(file: Annotated[UploadFile, File(...)]) -> dict[str, Any]:
+async def upload(
+    file: Annotated[UploadFile, File(...)],
+    _key: str | None = Depends(require_api_key),
+) -> dict[str, Any]:
     """Upload a CSV file to S3 and register it as a queryable dataset.
 
     Args:
@@ -165,6 +172,7 @@ def get_collection(
     resource: str,
     _limit: int = Query(default=100, ge=1, le=10000, alias="_limit"),
     _offset: int = Query(default=0, ge=0, alias="_offset"),
+    _key: str | None = Depends(require_api_key),
 ) -> dict[str, Any]:
     """Return records from a stored dataset with pagination.
 
@@ -200,6 +208,17 @@ async def filter_middleware(request: Request, call_next: Any) -> JSONResponse:
         resource = path.split("/")[2]
         available = list_datasets()
         if resource in available:
+            # Check auth if enabled
+            if AUTH_ENABLED:
+                key = request.headers.get("X-API-Key")
+                if not key:
+                    return JSONResponse(
+                        status_code=401,
+                        content={"detail": "Missing API key. Provide it in the X-API-Key header."},
+                    )
+                if key not in VALID_KEYS:
+                    return JSONResponse(status_code=403, content={"detail": "Invalid API key."})
+
             params = dict(request.query_params)
             limit = int(params.pop("_limit", "100"))
             offset = int(params.pop("_offset", "0"))
