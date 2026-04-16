@@ -208,3 +208,16 @@ __marimo__/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+# Lambda build artifacts
+lambda_package/
+lambda_package.zip
+
+# Terraform
+infra/.terraform/
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
+infra/*.tfplan
+
+# CDK
+cdk.out/
