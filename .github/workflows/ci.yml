@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Ruff check (lint)
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install mypy types-requests
+          pip install fastapi uvicorn streamlit plotly scikit-learn pandas numpy
+
+      - name: Run mypy
+        run: mypy app/ --ignore-missing-imports --no-strict-optional
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install fastapi uvicorn streamlit plotly scikit-learn pandas numpy
+          pip install httpx pytest
+
+      - name: Run API import check
+        run: python -c "from app.main import app; print('API import OK')"
+
+      - name: Run API tests
+        run: pytest tests/ -v --tb=short
+        if: hashFiles('tests/') != ''
+
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t csv-to-json-api:test .
+
+      - name: Smoke test container
+        run: |
+          docker run -d --name api-test -p 8000:8000 csv-to-json-api:test
+          sleep 5
+          curl -f http://localhost:8000/ || (docker logs api-test && exit 1)
+          docker stop api-test

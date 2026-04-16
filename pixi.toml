@@ -8,6 +8,9 @@ version = "0.1.0"
 [tasks]
 serve = "uvicorn app.main:app --reload --port 8002"
 dashboard = "streamlit run streamlit_app/Home.py"
+test = "pytest tests/ -v --tb=short"
+lint = "ruff check ."
+format = "ruff format --check ."
 
 [dependencies]
 python = ">=3.14.4,<3.15"
@@ -20,3 +23,6 @@ plotly = ">=6.7.0, <7"
 scikit-learn = ">=1.8.0, <2"
 pandas = ">=3.0.2, <4"
 numpy = ">=2.4.4, <3"
+pytest = ">=9.0.3, <10"
+httpx = ">=0.28.1, <0.29"
+ruff = ">=0.15.10, <0.16"
