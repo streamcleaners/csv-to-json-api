@@ -1,3 +1,3 @@
 # csv-to-json-api
 
-We want to take csv data that is publicly available such as the Tariff data from the data.gov.uk, convert it to JSON and then make it available via an API hosted on Data Workspace. We also want to use an ML algorithm to make something cool with the data. Does this make sense? Can you reword the brief for clarity
+This project builds a scalable data pipeline on AWS infrastructure that ingests publicly available CSV datasets (such as UK tariff data from data.gov.uk), transforms them into JSON format, and exposes them through a RESTful API deployed on AWS infrastructure. The pipeline leverages AWS services for data processing, storage, and API hosting, ensuring reliability and scalability. Additionally, we will apply machine learning models to analyze the transformed data, enabling predictive analytics, pattern detection, or data-driven insights that add value beyond raw data access.
