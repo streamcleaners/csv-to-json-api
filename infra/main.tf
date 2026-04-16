@@ -35,6 +35,38 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# -----------------------------------------------------------------------------
+# S3 Data Bucket
+# -----------------------------------------------------------------------------
+
+resource "aws_s3_bucket" "data" {
+  bucket        = "${var.project_name}-data-${data.aws_caller_identity.current.account_id}"
+  force_destroy = true
+}
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_iam_role_policy" "lambda_s3" {
+  name = "${var.project_name}-lambda-s3"
+  role = aws_iam_role.lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListBucket",
+      ]
+      Resource = [
+        aws_s3_bucket.data.arn,
+        "${aws_s3_bucket.data.arn}/*",
+      ]
+    }]
+  })
+}
+
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir  = "${path.module}/../lambda_package"
@@ -52,7 +84,9 @@ resource "aws_lambda_function" "api" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
   environment {
-    variables = {}
+    variables = {
+      DATA_BUCKET = aws_s3_bucket.data.bucket
+    }
   }
 }
 

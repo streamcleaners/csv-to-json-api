@@ -17,3 +17,8 @@ output "streamlit_instance_id" {
   description = "Streamlit EC2 instance ID"
   value       = aws_instance.streamlit.id
 }
+
+output "data_bucket" {
+  description = "S3 bucket for CSV data"
+  value       = aws_s3_bucket.data.bucket
+}
