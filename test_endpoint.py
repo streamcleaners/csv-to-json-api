@@ -1,49 +1,20 @@
-# ruff: noqa: S310
 """Quick smoke test: send a CSV to the deployed API and print the JSON response.
 
 Usage:
-    python test_endpoint.py
+    pixi run python test_endpoint.py
 """
 
 from __future__ import annotations
 
 import json
-import subprocess
-import urllib.request
 from pathlib import Path
 
+import httpx
+
+API_URL = "https://qk011cty71.execute-api.eu-west-2.amazonaws.com/api/convert"
 CSV_FILE = Path("data/commodities.csv")
 
-API_URL = (
-    subprocess.check_output(
-        ["terraform", "output", "-raw", "api_url"],
-        cwd="infra",
-        text=True,
-    ).rstrip("/")
-    + "/api/convert"
-)
+response = httpx.post(API_URL, files={"file": (CSV_FILE.name, CSV_FILE.read_bytes(), "text/csv")})
+response.raise_for_status()
 
-csv_bytes = CSV_FILE.read_bytes()
-
-boundary = "----TestBoundary123"
-body = (
-    (
-        f"--{boundary}\r\n"
-        f'Content-Disposition: form-data; name="file"; filename="{CSV_FILE.name}"\r\n'
-        f"Content-Type: text/csv\r\n"
-        f"\r\n"
-    ).encode()
-    + csv_bytes
-    + f"\r\n--{boundary}--\r\n".encode()
-)
-
-req = urllib.request.Request(
-    API_URL,
-    data=body,
-    headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
-)
-
-with urllib.request.urlopen(req) as resp:
-    result = json.loads(resp.read())
-
-print(json.dumps(result, indent=2))
+print(json.dumps(response.json(), indent=2))
