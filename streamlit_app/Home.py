@@ -32,6 +32,7 @@ st.markdown(
     | **Document Checker** | Look up required certificates and licences by commodity |
     | **Duty Comparison** | Compare duty rates across countries for a commodity |
     | **Protection Index** | Composite protection score ranking by commodity chapter |
+    | **Upload & Explore** | Upload any CSV and get auto-generated visualisations |
 
     ---
     *Data is entirely fictional and for demonstration purposes only.*
